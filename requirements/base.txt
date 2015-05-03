@@ -1,1 +1,5 @@
-Django==1.8
+Django==1.8.1
+django-admin-tools==0.5.2
+-e git://github.com/smacker/django-filebrowser-no-grappelli.git@911318f0e735ab60485c5783759b3f6a058f2337#egg=django_filebrowser_no_grappelli-3.5.7
+Pillow==2.8.1
+psycopg2==2.6

@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from assetpost.views import home, login_user
+from filebrowser.sites import site
 
 urlpatterns = [
+    url(r'^admin/filebrowser/', include(site.urls)),
+    url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url('^', include('django.contrib.auth.urls')),
+    url(r'^login/$', login_user, name ='login_user'),
+    url(r'^$', home, name ='home'),
 ]
