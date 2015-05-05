@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from assetpost.views import home, login_user
+from assetpost.views import *
 from filebrowser.sites import site
 
 urlpatterns = [
@@ -23,6 +23,28 @@ urlpatterns = [
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url('^', include('django.contrib.auth.urls')),
-    url(r'^login/$', login_user, name ='login_user'),
-    url(r'^$', home, name ='home'),
+    url(r'^$', login_user, name ='login_user'),
+    #url(r'^$', home, name ='home'),
 ]
+urlpatterns += (
+    url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
+    url(r'^main/', postsearch),
+
+    url(r'^logout/$', logout_page),
+    url(r'^create/', create_record),
+    url(r'^filebrowser/', file_browser),
+    url(r'^newpostpage/', create_postpage),
+    url(r'^newpostentry/', create_postentry),
+    url(r'^editpostentry/(?P<id>\w+)/', edit_postentry),
+    url(r'^poststatus/', post_status),
+    url(r'^displaypost/(?P<id>\w+)/', display_post),
+    url(r'^upload/', file_upload),
+    url(r'^userprofile/(?P<id>\w+)/', display_profile),
+#    (r'^attachments/', include('attachments.urls')),
+    url(r'^quickpost/(?P<job_number>[A-Z0-9-]+)/', quickpost, name="quickpost"),
+#    url(r'^branding/(?P<client>[A-Za-z-]+)/', branding, name="branding"),
+    url(r'^production-display/(?P<id>\w+)/', display_prdInboxEntry),
+    url(r'^edit-inbox/(?P<id>\w+)/(?P<userid>\w+)/', edit_prdInboxEntry),
+    url(r'^delete-item/(?P<id>\w+)/(?P<userid>\w+)/', delete_prdInboxEntry),
+    url(r'^specdisplay/(?P<job_number>[A-Z0-9-]+)/', display_record, name="display_record"),
+)

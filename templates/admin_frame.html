@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>{% block title %}{% endblock %}</title> 
+		<link>{% block link %}{% endblock %}</link>
+		<link rel="stylesheet" type="text/css" href="../../../../site_media/css/wrmscurrent.css" />
+	<!--	<link rel="stylesheet" type="text/css" href="../../../../site_media/css/custom-theme/BUjquery-ui-1.8.1.custom.css" /> 
+	    <link rel="stylesheet" href="../../../../site_media/css/themes/blue/style.css" type="text/css" media="print, projection, screen" /> -->
+		
+
+		<script>{% block script %}{% endblock %}</script>
+		<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script> 
+		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+		<script type="text/javascript" language="javascript" src="../../../../site_media/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<script type="text/javascript" language="javascript" src="../../../../site_media/js/jquery.tablesorter.min.js"></script> 
+		<script type="text/javascript" language="javascript" src="../../../../site_media/js/jquery.tablesorter.pager.js"></script> 
+		<script type="text/javascript" language="javascript" src="../../../../site_media/js/jquery.metadata.js"></script> 
+	<!--<script src="../../../../site_media/js/wrms_portal.js" type="text/javascript" charset="utf-8"></script> -->
+		<!--[if IE 8]><script>
+document.getElementsByClassName = 
+Element.prototype.getElementsByClassName = function(class_name) {
+    // Escape special characters
+    class_name = (class_name + '').replace(/[~!@$%^&*()_+\-=,./';:"?><[\]{}|`#]/g, '\\$&');
+    return this.querySelectorAll('.' + class_name);
+};
+</script><![endif]-->
+<script type="text/javascript">
+
+function showInbox(){
+  var user = "{{ user.last_name }}";
+  if (user){
+    document.getElementById('quickpost_button').style.display = "block";
+  }else{
+    document.getElementById('quickpost_button').style.display = "none";
+  }
+}
+function showDashboard(url) {
+	$('.shell').css('margin', '0');
+	$('#logo_wedb').css('visibility', 'hidden');
+	$('#stage').fadeOut( "fast", function() { });
+	$('#inbox_frame').fadeIn(4000, function() { });
+	
+//	newwindow=window.open(url,'WRMS | Project Inbox','height=700, width=1200,top=20,left=0,resizable');
+//	if (window.focus) {newwindow.focus()}
+}
+</script>
+
+<style type="text/css">
+#quickpost_button{ position:absolute; display:none; top:10px;left:600px;cursor:pointer; width:400px; height:54px;}
+html{overflow:hidden;}
+a { color: #333; }
+body{margin:0;}
+input.qp_inp{
+	width:80px;height:14px;font-size:1.1em;margin-top:0;
+}
+#InboxEntry_button{ position:absolute; display:none; top:10px;left:600px;cursor:pointer; width:65px; height:22px;}
+#inbox_frame{ position:absolute; display:none; top:50px;left:0;width:1600px;height:1200px;z-index:5500;}
+</style>
+<style>{% block style %}{% endblock %}</style>
+</head>
+
+<body>
+	
+		<div id="nav">
+			<div class="wrap"> 
+				<div class="menu">  
+					<a class="menu-item menu-item-support" href="../../main/"><span class="current" style="margin-right:0;">{{ user.first_name }}&nbsp;{{ user.last_name }}</span></a>
+					<a class="menu-item menu-item-about" href="#"><span class="label">Pages</span></a> 
+					<a class="menu-item menu-item-developer" href="#"></span><span class="label">Entries</span></a> 
+					<a class="menu-item menu-item-community" href="../../filebrowser/"><span class="label">Filebrowser</span></a> 
+					<a class="menu-item menu-item-app" href="/../../contact/internal/"><span class="label">Contact</span></a> 
+					 
+						<!--<div class="menu-item menu-item-download"> 
+							<a class="bt accent" href="/download#autodownload"> <span class="icon i-download"> </span><span class="label">Download</span> </a> 
+						</div>  -->
+				</div>
+				<div class="dropdown dropdown-about"> 
+					<div class="inner"> 
+						<a href="../../newpostpage/">Create Post Page</a> 
+						<a href="../../newportalpage/">Create Portal Page</a> 
+						<a href="../../newtacticpage/">Create Tactic Page</a>
+						<a href='../../newbannerpage/'>create Banner Page</a> 
+					</div> 
+				</div> 
+				<div class="dropdown dropdown-developer"> 
+					<div class="inner"> 
+						<a href="../../newpostentry/">Post to Project</a> 
+						<a href="../../newtacticentry/">Post to Tactic</a> 
+					</div> 
+				</div> 
+				<div class="dropdown dropdown-community"> 
+					<div class="inner"> 
+						<a href="../../filebrowser/">Filebrowser</a> 
+					</div> 
+				</div> 
+				<div class="dropdown dropdown-app"> 
+					<div class="inner"> 
+						<a class='inactive' href="/../../contact/internal/">Contact Sheet</a>  
+					</div> 
+				</div> 
+				<div class="dropdown dropdown-support"> 
+					<div class="inner">  
+					<!--	<a class='inactive' href='../../leave_request/{{ request.user.get_profile.id }}'>Leave Requests / Records</a> -->
+						<a class='inactive' href='/../logout/'>Logout</a>
+					</div> 
+				</div>
+			</div>	
+		  </div>
+			<script type="text/javascript">
+			function processJobNumber(){
+				var input = $('#job_id').val();
+				var input = input.toUpperCase();
+				if (input.length < 8 || input.length > 15) {
+					alert ("Please input a valid job number");
+				}else {
+				var href =  "../../quickpost/" + input;
+				function showPopup(url) {
+					newwindow=window.open(url,'WRMS | QuickPost','height=900, width=1600,top=20,left=0,resizable');
+					if (window.focus) {newwindow.focus()}
+				}
+				showPopup(href);
+				}
+			}
+			function processBranding(){
+				var input = $('#job_id').val();
+				if (input.length < 1) {
+					alert ("Please input a client name");
+				}else {
+				var href =  "../../branding/" + input;
+				function brandingPopup(url) {
+					newwindow=window.open(url,'WRMS | BrandingColors','height=400, width=900,top=20,left=0,resizable');
+					if (window.focus) {newwindow.focus()}
+				}
+				brandingPopup(href);
+				}
+			}
+			
+			</script>
+			<div id="quickpost_button"><input type="text" id="job_id" class="qp_inp" /><a id="job_id_link" href="../../quickpost/" onclick="processJobNumber();return(false);" /><img  width="65" height="22" src="../../../../site_media/images/quickpost_btn.png" /></a><a href="../../production-display/{{ request.user.get_profile.id }}" onclick="showDashboard(this.href);return(false);"><img  width="65" height="22" src="../../../../site_media/images/inbox_btn.png" /></a>
+			<a id="job_id_link" href="../../branding/" onclick="processBranding();return(false);" /><img  width="65" height="22" src="../../../../site_media/images/branding_btn.png" /></a>
+			</div>
+			</div>
+			
+			<script type="text/javascript">
+
+		function activateDropDown(target, height) {
+		    var animate = true;
+		    var prefix = '.dropdown-' + target;
+		    var menuPrefix = '.menu-item-' + target;
+		    var menu = $(prefix);
+		    var height = 0;
+		    height = $(prefix + ' .inner').height()+4+4+8;
+
+		    $(prefix +', ' + '.menu-item-' + target).hover(function(r){
+		        var item = $(this);
+		        if (item[0].className && item[0].className.indexOf('menu') > -1) {
+		            var left = item.position().left;
+		            menu.css('left', left+'px');
+		            menu.clearQueue().animate({height:height+'px'}, 200);
+		            $(menuPrefix).addClass('active')
+		        }
+		        animate = false;
+		        setTimeout(function(){animate = true;},1);
+		        menu.css('display', 'block');
+		    }, function(r) {
+		        setTimeout(function(){
+		            if (animate) {
+		                menu.animate({height:'0px'}, 200);
+		                $(menuPrefix).removeClass('active');
+		            }
+		        }, 0);
+		    });
+		}
+
+		    activateDropDown('about'); 
+
+		    activateDropDown('developer'); 
+
+		    activateDropDown('community'); 
+
+		    activateDropDown('app'); 
+
+		    activateDropDown('support'); 
+		
+			showInbox();
+
+		</script>
+		
+	{% block content %}{% endblock %}
+    {% block footer %}{% endblock %}
+</body>
+</html>

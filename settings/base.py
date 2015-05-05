@@ -55,11 +55,12 @@ INSTALLED_APPS = (
     'admin_tools.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'filebrowser',
+    'django.contrib.contenttypes',
     'assetpost'
 )
 
@@ -143,3 +144,5 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = (
     os.path.join(BASE_DIR, "static/media/")
 )
+
+LOGIN_REDIRECT_URL = ('/main/')
