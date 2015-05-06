@@ -24,7 +24,8 @@ from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from datetime import datetime
 from django.forms.models import modelformset_factory
-from django.forms.models import inlineformset_factory
+from django.forms.models import *
+from django.template.response import TemplateResponse
 
 # Create your views here.
 def login_user(request):
@@ -92,14 +93,14 @@ def create_record(request):
     })
 
 def create_postpage(request):
-    tpl = "admin_createpostpage.html"
+    tpl = "createpostpage.html"
     user = request.user
     variables = RequestContext(request, { 'user': user }) 
-    return render_to_response(tpl, variables)
+    return TemplateResponse(request, tpl, {'form': PageForm()})
 
 
 def create_postentry(request):
-    tpl = "admin_createpostentry.html"
+    tpl = "createpostentry.html"
     user = request.user
     variables = RequestContext(request, { 'user': user }) 
     return render_to_response(tpl, variables)

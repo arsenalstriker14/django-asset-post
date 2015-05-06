@@ -40,15 +40,6 @@ class PostEntryAdmin(admin.ModelAdmin):
             'fields': ( 'misc_link', 'link_misc', 'misc_link2', 'link_misc2', 'mobile_view_url', 'link_pdf', 
                     'link_html', 'link_report', 'link_text', 'link_zip' )
         }),
-        ('Banner Options', {
-            'classes': ('collapse',),
-            'fields': ( ('banner1', 'banner1_cell', 'banner1_static', 'banner1_swf', 'banner1_html', 'banner1_url'), ('banner2', 'banner2_cell', 'banner2_static', 'banner2_swf', 'banner2_html', 'banner2_url'), 
-                        ('banner3', 'banner3_cell', 'banner3_static', 'banner3_swf', 'banner3_html', 'banner3_url'), ('banner4', 'banner4_cell', 'banner4_static', 'banner4_swf', 'banner4_html', 'banner4_url'),
-                        ('banner5', 'banner5_cell', 'banner5_static', 'banner5_swf', 'banner5_html', 'banner5_url'), ('banner6', 'banner6_cell', 'banner6_static', 'banner6_swf', 'banner6_html', 'banner6_url'),
-                        ('banner7', 'banner7_cell', 'banner7_static', 'banner7_swf', 'banner7_html', 'banner7_url'), ('banner8', 'banner8_cell', 'banner8_static', 'banner8_swf', 'banner8_html', 'banner8_url'),
-            ('misc_banner', 'misc_banner_cell', 'misc_banner_static', 'misc_banner_swf', 'misc_banner_html', 'misc_banner_url'), ('misc_banner2', 'misc_banner2_cell', 'misc_banner2_static', 'misc_banner2_swf', 'misc_banner2_html', 'misc_banner2_url'),
-            ('misc_banner3', 'misc_banner3_cell', 'misc_banner3_static', 'misc_banner3_swf', 'misc_banner3_html', 'misc_banner3_url'))
-        }),
     )
     list_display = ('client', 'job_number', 'cell_number', 'post_type','post_round', 'post_title', 'date', 'visibility')
     list_filter = (

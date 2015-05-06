@@ -1,0 +1,504 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<title>WRMS – Production InBox</title>
+		
+		<link rel="stylesheet"  href="../../../../site_media/css/inbox_styles.css" />
+		<link href="../../../../site_media/css/bootstrap.min.css" rel="stylesheet" /></link>
+		<link href="../../../../site_media/css/bootstrap-datetimepicker.min.css" rel="stylesheet" /></link>
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+		
+		
+				
+		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<script type="text/javascript" language="javascript" src="../../../../site_media/js/jquery.tablesorter.min.js"></script>
+		<script type="text/javascript" src="../../../../site_media/js/moment.js"></script>
+		<script type="text/javascript" src="../../../../site_media/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../../site_media/js/bootstrap-datetimepicker.min.js"></script>
+		
+<script>
+$(function() {
+    $( "#dialog" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+ 
+    $( ".trigger" ).click(function() {
+      $( "#dialog" ).dialog( "open" );
+    });
+  });
+ 
+  $(function() {
+      $( "#studiodialog" ).dialog({
+        autoOpen: false,
+        show: {
+          effect: "blind",
+          duration: 1000
+        },
+        hide: {
+          effect: "explode",
+          duration: 1000
+        }
+      });
+ 
+      $( ".trigger" ).click(function() {
+        $( "#studiodialog" ).dialog( "open" );
+      });
+    });  
+	
+    $(function() {
+        $( "#creativedialog" ).dialog({
+          autoOpen: false,
+          show: {
+            effect: "blind",
+            duration: 1000
+          },
+          hide: {
+            effect: "explode",
+            duration: 1000
+          }
+        });
+ 
+        $( ".trigger" ).click(function() {
+          $( "#creativedialog" ).dialog( "open" );
+        });
+      });  
+ 
+jQuery(document).ready(function() {
+	$("#id_date_in").datepicker();
+});
+
+function openBasecamp(url) {
+newwindow=window.open(url,'_blank','height=600,width=900,top=20,left=0,resizable');
+if (window.focus) {newwindow.focus()}
+}
+
+function dismissAddAnotherPopup(win) {
+    win.close();
+}
+$( "#anchor" ).click(function() {
+  $( "#console" ).animate({
+    height: "toggle"
+  }, 1000, function() {
+    // Animation complete.
+  });
+});
+
+</script>
+
+<style type="text/css">
+
+html {width:880px;height:400px;}
+body{font-family:Helvetica, Arial, sans-serif;font-size:10px; font-weight:bold;color:#777;width:1200px;height:800px;}
+input{width:300px;}
+select{font-size:10px;max-width:150px;}
+th{padding:2px 5px;}
+td{padding:2px 5px; max-width:150px;overflow:hidden;font-weight:normal;}
+td > .container{max-width:200px;padding:0;}
+table.display_table td{max-width:300px;}
+input#inbox_submit_btn, input#inbox_delete_btn{display:inline;width:100px;}
+#contact_box{position:relative; display:block;width:1400px;}
+.shell{z-index:500;}
+.formdiv{
+	display:inline-block;padding:10px;margin:15px;border: 1px solid #333;
+}
+label{font-size:1.1em;}
+#admin_console{display:none;}
+.round{
+			border: 1px solid #eee;
+			border: 1px solid rgba(0, 0, 0, 0.05);
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			padding: 10px;
+			margin-bottom: 5px;
+		}
+.edit_btn{width:40px;}
+#id_cell_number{width:30px;height:15px;font-size:11px;}
+#id_job_number{width:60px;height:15px;font-size:11px;}
+#id_job_name{width:200px;height:15px;font-size:11px;}
+#id_basecamp_link{width:200px;height:15px;font-size:11px;}
+.basecamp, .note{max-height:15px;overflow:hidden;max-width:200px;}
+#id_note{max-width:200px;height:15px;font-size:11px;font-color:maroon;}
+#id_assigned_team{max-height:30px;}
+#id_date_due, #id_completed_on{width:150px;font-size:10px;height:15px;}
+#logo_wrapper {position:relative; display:block; top:0; left: 0; width:880px; height:60px; background-color:white;}
+
+#logo_temp{ position:relative; display:block;  left:700px; width:200px; height:50px;  margin-top:30px; background-image:url('../../../../site_media/images/logos/wrms_logo200.png'); background-repeat:no-repeat; border:none; }
+</style>
+</head>
+
+
+
+<body>
+	<div class="container">
+		<div id="logo_wrapper">
+		    <a href="../../main/"><span id="logo_temp" class=""></span></a>
+	    </div>
+
+			
+			<h4>add item</h4> 
+				
+				<form action="." method="POST">{% csrf_token %}
+					<div style="display:table;">
+							<div style="display:table-row;">
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        		{{ form.assigned_by.errors }}
+					        		<label for="id_jassigned_by">Assigned by:</label>
+					        		{{ form.assigned_by }}
+					    			</div>
+								</div>
+								<div style="display:table-cell;">&nbsp; <div>
+								<div style="display:table-cell;">&nbsp; <div>
+								<div style="display:table-cell;">&nbsp; <div>
+								<div style="display:table-cell;">&nbsp; <div>
+								<div style="display:table-cell;">&nbsp; </div>
+							</div>
+    						<div style="display:table-row;">
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        		{{ form.job_number.errors }}
+					        		<label for="id_job_number">job no:</label>
+					        		{{ form.job_number }}
+					    			</div>
+								</div>
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        		{{ form.cell_number.errors }}
+					        		<label for="id_cell_number">cell:</label>
+					        		{{ form.cell_number }}
+									</div>
+								</div>
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        			{{ form.job_name.errors }}
+					        			<label for="job_name">job name:</label>
+					        			{{ form.job_name }}
+					    			</div>
+								</div>
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        			{{ form.request.errors }}
+					        			<label for="request">request:</label>
+					        			{{ form.request }}
+					    			</div>
+								</div>
+								<div style="display:table-cell;">
+									<div class="group_input">
+					        			{{ form.note.errors }}
+					        			<label for="id_note">note:</label>
+					        			{{ form.note }}
+					    			</div>
+								</div>
+								<div style="display:table-cell;">
+									<div class="container">
+					                      <!--  <div class='well'> -->
+					                            <div class="form-group">
+					                                <div class='input-group date' id='datetimepicker1'>
+									        			<label for="id_date_due">date_due:</label>
+									        			{{ form.date_due}}
+					                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+					                                    </span>
+					                                </div>
+												</div>
+					                        <!--    </div> -->
+					                        <script type="text/javascript">
+					                            $(function () {
+					                                $('#datetimepicker1').datetimepicker();
+					                            });
+					                        </script>
+					                 </div>
+								</div>
+							</div>  <!-- end css table-row -->
+    						<div style="display:table-row;">
+									<div style="display:table-cell;">
+										<div class="group_input">
+						        			{{ form.box.errors }}
+						        			<label for="id_box">inbox:</label>
+						        			{{ form.box }}
+						    			</div>
+									</div>
+									<div style="display:table-cell;">
+										<div class="group_input">
+					        				{{ form.assigned_to.errors }}
+					        				<label for="assigned_to">assigned_to:</label>
+					        				{{ form.assigned_to }}
+					    				</div>
+									</div>
+									<div style="display:table-cell;">
+										<div class="group_input">
+						        			{{ form.basecamp_link.errors }}
+						        			<label for="id_basecamp_link">basecamp:</label>
+						        			{{ form.basecamp_link }}
+						    			</div>
+									</div>
+									<div style="display:table-cell;">
+										<div class="accepted_by">
+						        			{{ form.accepted_by.errors }}
+						        			<label for="id_accepted_by">accepted_by:</label>
+						        			{{ form.accepted_by }}
+						    			</div>
+									</div>
+								
+									<div style="display:table-cell;">
+										<div class="group_input">
+						        			{{ form.status.errors }}
+						        			<label for="id_status">status:</label>
+						        			{{ form.status }}
+						    			</div>
+									</div>
+									<div style="display:table-cell;">
+										<div class="container">
+						                      <!--  <div class='well'> -->
+						                            <div class="form-group">
+						                                <div class='input-group date' id='datetimepicker2'>
+										        			<label for="id_completed_on">completed:</label>
+										        			{{ form.completed_on}}
+						                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+						                                    </span>
+						                                </div>
+													</div>
+						                        <!--    </div> -->
+						                        <script type="text/javascript">
+						                            $(function () {
+						                                $('#datetimepicker2').datetimepicker();
+						                            });
+						                        </script>
+						                 </div>
+									 </div>
+							</div>  <!-- end css table-row -->
+    						<div style="display:table-row;">
+								<div style="display:table-cell;">&nbsp;</div>
+								<div style="display:table-cell;">
+									<p><input id="inbox_submit_btn" type="submit" value="add" /></p>
+								</div>
+								<div style="display:table-cell;">
+									<div class="your-button-class"> 
+									<p><input id="inbox_delete_btn" href="../../delete-item/{{ form.id }}/{{ request.user.get_profile.id }}" type="submit" value="delete" /></p> 							  </div>
+								</div>
+							</div>
+					</div>  <!-- end css table -->
+    				
+				</form> 
+			</div>
+			<hr />
+			<div id="contact_box">
+				<h3>{{ user.first_name }}'s Taskbox</h3>
+				<table id="personal_table" class="display_table">
+				  <thead>
+					<tr>
+						<th> </th>
+						<th>from</th>
+						<th>job number</th>
+						<th>cell number</th>
+						<th>job name</th>
+						<th>request</th>
+						<th>note</th>
+						<th>date in</th>
+						<th>basecamp link</th>
+						<th>accepted_by</th>
+						<th>status<th>
+						<th>completed<th>
+					</tr>
+				  </thead>
+				  <tbody>
+						{% if creativerecords or studiorecords or records %}
+						{% for record in records %}
+					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
+						<td><a href="../../../edit-inbox/{{ record.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td>{{ record.assigned_by }}</td>
+						<td>{{ record.job_number }}</td>
+						<td>{{ record.cell_number }}</td>
+						<td>{{ record.job_name }}</td>
+						<td>{{ record.request }}</td>
+						<td><div class="note"><a class="trigger" href="#">{{ record.note }}</a></div></td>
+						<td>{{ record.date_due }}</td>
+						<td><div class="basecamp"><a href="{{ record.basecamp_link }}/" target="_blank">{{ record.basecamp_link }}</a></div></td>
+						<td>{{ record.accepted_by }}</td>
+						<td class="status_cell">{{ record.status }}</td>
+						<td> </td>
+						<td>{{ record.completed_on }}</td>
+						<div id="dialog" title="Basic dialog">
+						  <p>{{ record.note }}</p>
+						  		{% endfor %}
+							{% for studiorecord in studiorecords %}
+						  <p>{{ studiorecord.note }}</p>
+				  				{% endfor %}
+							{% for creativerecord in creativerecords %}
+						  <p>{{ creativerecord.note }}</p>
+						  		{% endfor %}
+						</div>
+						
+					</tr>
+						
+						
+				  </tbody>
+				</table>
+				<br />
+				<hr />
+				<br /><br />
+			</div> 
+			
+			<div id="studio_box">
+				<h3>WRMS Studio Taskbox</h3>
+				<table id="studio_table" class="display_table">
+				  <thead>
+					<tr>
+						<th> </th>
+						<th>from</th>
+						<th>job number</th>
+						<th>cell number</th>
+						<th>job name</th>
+						<th>request</th>
+						<th>note</th>
+						<th>date in</th>
+						<th>basecamp link</th>
+						<th>accepted_by</th>
+						<th>status<th>
+						<th>completed<th>
+					</tr>
+				  </thead>
+				  <tbody>
+						{% for studiorecord in studiorecords %}
+					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ studiorecord.id }}">
+						<td><a href="../../../edit-inbox/{{ studiorecord.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td>{{ studiorecord.assigned_by }}</td>
+						<td>{{ studiorecord.job_number }}</td>
+						<td>{{ studiorecord.cell_number }}</td>
+						<td>{{ studiorecord.job_name }}</td>
+						<td>{{ studiorecord.request }}</td>
+						<td><div class="note"><a class="trigger" href="#">{{ studiorecord.note }}</a></div></td>
+						<td>{{ studiorecord.date_due }}</td>
+						<td><div class="basecamp"><a href="{{ studiorecord.basecamp_link }}/" target="_blank">{{ studiorecord.basecamp_link }}</a></div></td>
+						<td>{{ studiorecord.accepted_by }}</td>
+						<td class="status_cell">{{ studiorecord.status }}</td>
+						<td> </td>
+						<td>{{ studiorecord.completed_on }}</td>
+							
+						<div id="studiodialog" title="Basic dialog">
+						  <p>{{ studiorecord.note }}</p>
+						  		{% endfor %}
+							{% for record in records %}
+						  <p>{{ record.note }}</p>
+				  				{% endfor %}
+							{% for creativerecord in creativerecords %}
+						  <p>{{ creativerecord.note }}</p>
+						  		{% endfor %}
+						</div>
+						
+			
+					</tr>
+						
+				  </tbody>
+				</table>
+				<br />
+				<hr />
+				<br /><br />
+			</div> 
+			
+			<div id="creative_box">
+				<h3>WRMS Creative Taskbox</h3>
+				<table id="creative_table" class="display_table">
+				  <thead>
+					<tr>
+						<th> </th>
+						<th>from</th>
+						<th>job number</th>
+						<th>cell number</th>
+						<th>job name</th>
+						<th>request</th>
+						<th>note</th>
+						<th>date in</th>
+						<th>basecamp link</th>
+						<th>accepted_by</th>
+						<th>status<th>
+						<th>completed<th>
+					</tr>
+				  </thead>
+				  <tbody>
+						{% for creativerecord in creativerecords %}
+					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ creativerecord.id }}">
+						<td><a href="../../../edit-inbox/{{ creativerecord.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td>{{ creativerecord.assigned_by }}</td>
+						<td>{{ creativerecord.job_number }}</td>
+						<td>{{ creativerecord.cell_number }}</td>
+						<td>{{ creativerecord.job_name }}</td>
+						<td>{{ creativerecord.request }}</td>
+						<td><div class="note"><a class="trigger" href="#">{{ creativerecord.note }}</a></div></td>
+						<td>{{ creativerecord.date_due }}</td>
+						<td><div class="basecamp"><a href="{{ creativerecord.basecamp_link }}/" target="_blank">{{ creativerecord.basecamp_link }}</a></div></td>
+						<td>{{ creativerecord.accepted_by }}</td>
+						<td class="status_cell">{{ creativerecord.status }}</td>
+						<td> </td>
+						<td>{{ creativerecord.completed_on }}</td>
+			
+					
+			
+					</tr>
+					{% endfor %}
+					{% else %}
+					{% endif %}
+				  </tbody>
+				</table>
+				{% if creativerecords or studiorecords or records %}
+				{% for creativerecord in creativerecords %}
+				
+				{% for studiorecord in studiorecords %} 
+				<div id="dialog" title="Basic dialog">
+				  <p>{{ creativerecord.note }}</p>
+				  <p>{{ studioerecord.note }}</p>
+				  <p>{{ record.note }}</p>
+				</div>
+				{% for record in records %}
+				<div id="dialog" title="Basic dialog">
+				  <p>{{ creativerecord.note }}</p>
+				  <p>{{ studioerecord.note }}</p>
+				  <p>{{ record.note }}</p>
+				</div>
+				
+				{% endfor %}{% endfor %}{% endfor %}
+				{% else %}
+				{% endif %}
+				
+				<br />
+				<hr />
+				<br /><br />
+			</div>
+				<script type="text/javascript">
+				$(function(){
+					var projectArray = document.getElementsByClassName('status_cell');
+					for (i=0; i< projectArray.length; i++){
+						if (projectArray[i].innerHTML === "In Progress"){
+							projectArray[i].parentNode.style.backgroundColor = "#cffcc8";
+						}else if (projectArray[i].innerHTML === "Awaiting Action"){
+							projectArray[i].style.backgroundColor = "#ffffff";
+						}else if (projectArray[i].innerHTML === "Posted" || projectArray[i].innerHTML === "Released" || projectArray[i].innerHTML === "Basecamp"){
+							projectArray[i].parentNode.style.backgroundColor = "#cccccc";
+						}
+					}
+				})
+				</script>
+			 
+				
+ 	
+	</div>
+		
+</body>
+</html>
+

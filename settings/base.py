@@ -61,7 +61,8 @@ INSTALLED_APPS = (
     'django_filters',
     'filebrowser',
     'django.contrib.contenttypes',
-    'assetpost'
+    'crispy_forms',
+    'assetpost',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -88,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.media',
+                'django.core.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -146,3 +148,5 @@ MEDIA_ROOT = (
 )
 
 LOGIN_REDIRECT_URL = ('/main/')
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

@@ -16,17 +16,6 @@ import django_filters
 import datetime
 
 
-CLIENT_CHOICES = (
-    ('amz', 'Amazon'),
-    ('apl', 'Apple'),
-    ('goog', 'Google'),
-    ('int', 'Intel'),
-    ('msft', 'Microsoft'),
-    ('pps', 'PepsiCo'),
-    ('vzn', 'Verizon'),
-    ('wdc', 'Disney'),   
-)
-
 PAGE_CHOICES = (
         ('Project', 'Project'),
         ('Portal', 'Portal'),
@@ -116,7 +105,7 @@ class JobContact(models.Model):
         fax = models.CharField(max_length=15, unique=False, blank=True, null=True)
         email = models.EmailField(blank=True, null=True)
         
-        def __unicode__ (self):
+        def __str__(self):
                 return self.name
 
         class Admin: 
@@ -125,7 +114,7 @@ class JobContact(models.Model):
 class ClientList(models.Model):
         name = models.CharField(max_length=64, unique=True, blank=True, null=True)
         
-        def __unicode__ (self):
+        def __str__(self):
                 return self.name
 
         class Admin: 
@@ -166,7 +155,7 @@ class PostEntry(models.Model):
             link_zip = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
             
 
-            def __unicode__ (self):
+            def __str__(self):
                     return u'%s %s %s %s %s' % (self.client, self.job_number, '-', self.cell_number, self.post_title)
 
             def save(self, force_insert=False, force_update=False):
@@ -182,9 +171,9 @@ class PostEntry(models.Model):
 
 
 class UserProfile(models.Model):  
-    user = models.ForeignKey(User, unique=True, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, null=True, on_delete=models.SET_NULL)
     fullname = models.CharField(max_length=64, unique=False)
-    company = models.CharField(max_length=50, choices=CLIENT_CHOICES)
+    company = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
     position = models.CharField(max_length=64, unique=False, blank=True, null=True)
     egroup = models.CharField(max_length=50, choices=EMP_GROUP_CHOICES)
 #    im_username = models.CharField(max_length=64, unique=True, blank=True, null=True)
@@ -204,7 +193,7 @@ class UserProfile(models.Model):
     User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
   
   
-    def __unicode__(self):
+    def __str__(self):
         return u'%s' % self.fullname
         
     class Meta:
@@ -218,17 +207,17 @@ class TaskGroup(models.Model):
         group_name = models.CharField(max_length=100)
         member = models.ManyToManyField(UserProfile)
 
-        def __unicode__ (self):
+        def __str__(self):
                 return u'%s' % (self.group_name)
 
         class Admin:
                 pass
 
 class AccountGroup(models.Model):
-        client = models.CharField(max_length=50, choices=CLIENT_CHOICES)
+        client = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
         member = models.ManyToManyField(UserProfile)
 
-        def __unicode__ (self):
+        def __str__(self):
                 return u'%s' % (self.client)
 
         class Admin:
@@ -242,7 +231,7 @@ class PostPage(models.Model):
         create_date = models.DateField(("Date"), default=datetime.date.today)
         contact = models.ManyToManyField(AccountGroup)
 
-        def __unicode__ (self):
+        def __str__(self):
                 return u'%s %s %s' % (self.client, self.job_number, self.job_name)
 
         def save(self, force_insert=False, force_update=False):
@@ -346,7 +335,7 @@ class Employee(models.Model):
         fax = models.CharField(max_length=15, unique=False, blank=True, null=True)
         email = models.EmailField(blank=True, null=True)
         
-        def __unicode__ (self):
+        def __str__(self):
                 return u'%s' % self.lname
 
         class Admin: 
@@ -356,7 +345,7 @@ class ProjectTeam(models.Model):
         team_name = models.CharField(max_length=64, choices=TEAM_CHOICES)
         team_member = models.ManyToManyField(UserProfile)
 
-        def __unicode__ (self):
+        def __str__(self):
                 return u'%s' % self.team_name
 
         class Admin: 
@@ -380,7 +369,7 @@ class InboxEntry(models.Model):
         accepted_by = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True)
         completed_on = models.DateTimeField(("Completed"),auto_now=False, blank=True, null=True)
 
-        def __unicode__ (self):
+        def __str__(self):
             return u'%s %s' % (self.job_number, self.job_name)
 
         class Admin: 
@@ -410,7 +399,7 @@ class TaskEntry(models.Model):
         completed_by = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
         returned = models.DateTimeField(auto_now_add=False)
 
-        def __unicode__ (self):
+        def __str__(self):
             return u'%s %s' % (self.project, self.description)
 
         class Admin: 
