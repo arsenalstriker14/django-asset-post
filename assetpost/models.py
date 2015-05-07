@@ -171,7 +171,8 @@ class PostEntry(models.Model):
 
 
 class UserProfile(models.Model):  
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, null=True, on_delete=models.SET_NULL)
+#    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, null=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User)
     fullname = models.CharField(max_length=64, unique=False)
     company = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
     position = models.CharField(max_length=64, unique=False, blank=True, null=True)
@@ -190,7 +191,7 @@ class UserProfile(models.Model):
     notes = models.TextField(max_length=2000, blank=True, null=True)
     email = models.EmailField()
 
-    User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+#    User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
   
   
     def __str__(self):

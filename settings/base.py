@@ -150,3 +150,7 @@ MEDIA_ROOT = (
 LOGIN_REDIRECT_URL = ('/main/')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+#FILE_UPLOAD_PERMISSIONS = 0644
+
+#AUTH_PROFILE_MODULE = 'assetpost.UserProfile'

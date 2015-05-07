@@ -60,10 +60,10 @@ def display_record(request, job_number):
             frrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='FinalRelease').order_by('-date', '-post_round', 'cell_number', 'post_title')
 
             if request.user.is_authenticated():
-                    tpl = 'clientportal_tmps/wrms_template.html'
+                    tpl = 'display_template.html'
                     return render_to_response(tpl, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
             else:
-                    tpl = 'clientportal_tmps/wrms_template.html'
+                    tpl = 'display_template.html'
                     return render_to_response(tpl, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
 
 
@@ -100,10 +100,14 @@ def create_postpage(request):
 
 
 def create_postentry(request):
-    tpl = "createpostentry.html"
-    user = request.user
-    variables = RequestContext(request, { 'user': user }) 
-    return render_to_response(tpl, variables)
+    if request.method == 'POST':
+        form = PostEntryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/newpostentry/')
+    else:
+        form = PostEntryForm()
+    return render(request,'createpostentry.html', {'form':form})
     
 def file_browser(request):
     tpl = "admin_filebrowser.html"

@@ -1,0 +1,552 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% csrf_token %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+{% if precords %}
+{% for precord in precords %}
+
+<title>{{ precord.job_number }}&nbsp;{{ precord.job_name }}</title>
+
+<link href="/site_media/css/template_styles.css" type="text/css" rel="stylesheet"></link>
+
+
+<script src="/site_media/js/wrms_portal.js" type="text/javascript" charset="utf-8"></script>
+<script src="/site_media/js/jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" language="javascript" src="../../../../site_media/js/wrms_component.js"></script>
+
+<!--[if IE 8]><script>
+document.getElementsByClassName = 
+Element.prototype.getElementsByClassName = function(class_name) {
+    // Escape special characters
+    class_name = (class_name + '').replace(/[~!@$%^&*()_+\-=,./';:"?><[\]{}|`#]/g, '\\$&');
+    return this.querySelectorAll('.' + class_name);
+};
+</script><![endif]-->
+<script type="text/javascript">
+	function displayLink(){
+		var displaylinks = document.getElementsByClassName('showlink');
+		for(var i=0; i < displaylinks.length; i++){
+			var linklength = displaylinks[i].getAttribute('href').length;
+			var linkvalue = displaylinks[i].getAttribute('href').toString();
+			if ( linklength > 18 || linkvalue.indexOf('http') > -1 ){
+				displaylinks[i].parentNode.style.display = "inline";
+				displaylinks[i].parentNode.style.float = "left";
+				displaylinks[i].parentNode.style.borderRight = "1px solid #000";
+				displaylinks[i].parentNode.style.textAlign = "center";
+				displaylinks[i].parentNode.style.padding = "0 5px";
+			}
+
+		}
+		
+	}
+</script>
+<style type="text/css">	
+.hidden{display:none;}
+</style>
+</head>
+
+
+<body>
+	<div id="stage">
+    	<div id="headerbox">
+        	<div id="logo_wrapper">
+				<span id="logo_temp"> </span>
+			</div>
+            <div id="identity_box" class="bighdr20pxblack">{{ precord.job_number }}<br />
+            {{ precord.job_name }}</div>
+            {% endfor %}
+			{% else %}
+			{% endif %}
+            <div class="contact_information sanserif12pxbd">Contact Information</div>
+
+			<div class="contact_box">
+				{% if precords %}
+				{% for precord in precords %}
+				{% for contact in precord.contact.all %}
+
+  				{% for member in contact.member.all %}
+  				<div>
+                	<div class="contact_name sanserif12px">{{ member.position }}:&nbsp;{{ member.fullname }}</div>
+                	<div class="contact_phone sanserif12px">{{ member.phone }}</div>
+                	<div class="contact_email sanserif12px"><a href="mailto:{{ member.email }}">{{ member.email }}</a></div>
+                </div>
+          
+				{% endfor %}
+				{% endfor %}
+				{% endfor %}
+				{% else %}
+				{% endif %}
+			
+            	
+			</div>
+			
+		</div>	
+			
+			<div class="body_col" style="left:10px;">
+				<div id="ce_div" class="column_hdr bighdr16px grey" style="margin-top:15px;">Creative Execution</div>
+				{% if cerecords %}
+				{% for cerecord in cerecords %}
+					<div class="entry_box_wrapper {{ cerecord.visibility }}">
+						<div id="ce_round{{ cerecord.post_round }}" title="{{ cerecord.date }}" class="entry_header sanserif12pxbd 
+						{{ cerecord.post_type }}{{ cerecord.post_round }}" style="line-height:2;"><hr />Creative Execution Round&nbsp;{{ cerecord.post_round }} &#151; {{ cerecord.date|date:"F d, Y" }}</div>
+						<div class="entry_title sanserif12px">{% if cerecord.docfile = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
+							{{ cerecord.post_title }}{% elif cerecord.docfile = "" %}<a href="{{ cerecord.url_link }}" 
+							target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.docfile }}" 
+							target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% endif %}
+						</div>
+						
+						<div class="entry_link_bar" style="margin-bottom:5px;">
+							<div class="en_misc sanserif12px {{ cerecord.add_misc }}"><a href="/media/{{ cerecord.link_misc }}" target="_blank" class="showlink">{{ cerecord.misc_link }}</a></div>
+							<div class="en_misc2 sanserif12px {{ cedrecord.add_misc2 }}"><a href="/media/{{ cerecord.link_misc2 }}" target="_blank" class="showlink">{{ cerecord.misc_link2 }}</a></div>
+							<div class="en_html sanserif12px {{ cerecord.add_html }}"><a href="/media/{{ cerecord.link_html }}" target="_blank" class="showlink">html</a></div>
+							<div class="en_mobile sanserif12px {{ cerecord.add_mobile_view }}"><a href="{{ cerecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
+							<div class="en_pdf sanserif12px {{ cerecord.add_pdf }}"><a href="/media/{{ cerecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+							<div class="en_report sanserif12px {{ cerecord.add_report }}"><a href="/media/{{ cerecord.link_report }}" target="_blank" class="showlink">links</a></div>
+							<div class="en_text sanserif12px {{ cerecord.add_text }}"><a href="/media/{{ cerecord.link_text }}" target="_blank" class="showlink">text</a></div>
+							<div class="en_zip sanserif12px {{ cerecord.add_zip }}"><a href="/media/{{ cerecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+							
+							<div class="en_banner sanserif12px">{% if cerecord.banner1_static != "" %}<a href="/media/{{ cerecord.banner1_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner1_cell }}&nbsp;{{ cerecord.banner1 }}</a>{% elif cerecord.banner1_swf = "" and cerecord.banner1_html = "" %}<a href="{{ cerecord.banner1_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner1_cell }}&nbsp;{{ cerecord.banner1 }}</a>{% else %}<a href="/media/{{ cerecord.banner1_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner1_cell }}&nbsp;{{ cerecord.banner1 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner2_static != "" %}<a href="/media/{{ cerecord.banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner2_cell }}&nbsp;{{ cerecord.banner2 }}</a>{% elif cerecord.banner2_swf = "" and cerecord.banner2_html = "" %}<a href="{{ cerecord.banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner2_cell }}&nbsp;{{ cerecord.banner2 }}</a>{% else %}<a href="/media/{{ cerecord.banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner2_cell }}&nbsp;{{ cerecord.banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner3_static != "" %}<a href="/media/{{ cerecord.banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner3_cell }}&nbsp;{{ cerecord.banner3 }}</a>{% elif cerecord.banner3_swf = "" and cerecord.banner3_html = "" %}<a href="{{ cerecord.banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner3_cell }}&nbsp;{{ cerecord.banner3 }}</a>{% else %}<a href="/media/{{ cerecord.banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner3_cell }}&nbsp;{{ cerecord.banner3 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner4_static != "" %}<a href="/media/{{ cerecord.banner4_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner4_cell }}&nbsp;{{ cerecord.banner4 }}</a>{% elif cerecord.banner4_swf = "" and cerecord.banner4_html = "" %}<a href="{{ cerecord.banner4_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner4_cell }}&nbsp;{{ cerecord.banner4 }}</a>{% else %}<a href="/media/{{ cerecord.banner4_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner4_cell }}&nbsp;{{ cerecord.banner4 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner5_static != "" %}<a href="/media/{{ cerecord.banner5_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner5_cell }}&nbsp;{{ cerecord.banner5 }}</a>{% elif cerecord.banner5_swf = "" and cerecord.banner5_html = "" %}<a href="{{ cerecord.banner5_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner5_cell }}&nbsp;{{ cerecord.banner5 }}</a>{% else %}<a href="/media/{{ cerecord.banner5_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner5_cell }}&nbsp;{{ cerecord.banner5 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner6_static != "" %}<a href="/media/{{ cerecord.banner6_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner6_cell }}&nbsp;{{ cerecord.banner6 }}</a>{% elif cerecord.banner6_swf = "" and cerecord.banner6_html = "" %}<a href="{{ cerecord.banner6_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner6_cell }}&nbsp;{{ cerecord.banner6 }}</a>{% else %}<a href="/media/{{ cerecord.banner6_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner6_cell }}&nbsp;{{ cerecord.banner6 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner7_static != "" %}<a href="/media/{{ cerecord.banner7_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner7_cell }}&nbsp;{{ cerecord.banner7 }}</a>{% elif cerecord.banner7_swf = "" and cerecord.banner7_html = "" %}<a href="{{ cerecord.banner7_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner7_cell }}&nbsp;{{ cerecord.banner7 }}</a>{% else %}<a href="/media/{{ cerecord.banner7_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner7_cell }}&nbsp;{{ cerecord.banner7 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.banner8_static != "" %}<a href="/media/{{ cerecord.banner8_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner8_cell }}&nbsp;{{ cerecord.banner8 }}</a>{% elif cerecord.banner8_swf = "" and cerecord.banner8_html = "" %}<a href="{{ cerecord.banner8_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner8_cell }}&nbsp;{{ cerecord.banner8 }}</a>{% else %}<a href="/media/{{ cerecord.banner8_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.banner8_cell }}&nbsp;{{ cerecord.banner8 }}</a>{% endif %}
+							</div>
+
+
+							<div class="en_banner sanserif12px">{% if cerecord.misc_banner_static != "" %}<a href="/media/{{ cerecord.misc_banner_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner_cell }}&nbsp;{{ cerecord.misc_banner }}</a>{% elif cerecord.misc_banner_swf = "" and cerecord.misc_banner_html = "" %}<a href="{{ cerecord.misc_banner_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner_cell }}&nbsp;{{ cerecord.misc_banner }}</a>{% else %}<a href="/media/{{ cerecord.misc_banner_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner_cell }}&nbsp;{{ cerecord.misc_banner }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.misc_banner2_static != "" %}<a href="/media/{{ cerecord.misc_banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner2_cell }}&nbsp;{{ cerecord.misc_banner2 }}</a>{% elif cerecord.misc_banner2_swf = "" and cerecord.misc_banner2_html = "" %}<a href="{{ cerecord.misc_banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner2_cell }}&nbsp;{{ cerecord.misc_banner2 }}</a>{% else %}<a href="/media/{{ cerecord.misc_banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner2_cell }}&nbsp;{{ cerecord.misc_banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cerecord.misc_banner3_static != "" %}<a href="/media/{{ cerecord.misc_banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner3_cell }}&nbsp;{{ cerecord.misc_banner3 }}</a>{% elif cerecord.misc_banner3_swf = "" and cerecord.misc_banner3_html = "" %}<a href="{{ cerecord.misc_banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner3_cell }}&nbsp;{{ cerecord.misc_banner3 }}</a>{% else %}<a href="/media/{{ cerecord.misc_banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cerecord.cell_number }}{{ cerecord.misc_banner3_cell }}&nbsp;{{ cerecord.misc_banner3 }}</a>{% endif %}
+							</div>
+							
+						</div>
+					</div>
+				
+				{% endfor %}{% else %}{% endif %}
+				
+				<div id="cd_div" class="column_hdr bighdr16px grey" style="margin-top:15px;margin-bottom:0;">Concept Development</div>
+				{% if cdrecords %}
+				{% for cdrecord in cdrecords %}
+					<div class="entry_box_wrapper {{ cdrecord.visibility }}">
+						<div id="cd_round{{ cdrecord.post_round }}" title="{{ cdrecord.date }}" class="entry_header sanserif12pxbd 
+						{{ cdrecord.post_type }}{{ cdrecord.post_round }}" style="line-height:2;"><hr />Concept Development Round&nbsp;{{ cdrecord.post_round }} &#151; {{ cdrecord.date|date:"F d, Y" }}</div>
+						<div class="entry_title sanserif12px">{% if cdrecord.docfile = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
+							{{ cdrecord.post_title }}{% elif cdrecord.docfile = "" %}<a href="{{ cdrecord.url_link }}" 
+							target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.docfile }}" 
+							target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% endif %}
+						</div>
+						
+						<div class="entry_link_bar" style="margin-bottom:5px;">
+							<div class="en_misc sanserif12px {{ cdrecord.add_misc }}"><a href="/media/{{ cdrecord.link_misc }}" target="_blank" class="showlink">{{ cdrecord.misc_link }}</a></div>
+							<div class="en_misc2 sanserif12px {{ cdrecord.add_misc2 }}"><a href="/media/{{ cdrecord.link_misc2 }}" target="_blank" class="showlink">{{ cdrecord.misc_link2 }}</a></div>
+							<div class="en_html sanserif12px {{ cdrecord.add_html }}"><a href="/media/{{ cdrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+							<div class="en_mobile sanserif12px {{ cdrecord.add_mobile_view }}"><a href="{{ cdrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
+							<div class="en_pdf sanserif12px {{ cdrecord.add_pdf }}"><a href="/media/{{ cdrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+							<div class="en_report sanserif12px {{ cdrecord.add_report }}"><a href="/media/{{ cdrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+							<div class="en_text sanserif12px {{ cdrecord.add_text }}"><a href="/media/{{ cdrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+							<div class="en_zip sanserif12px {{ cdrecord.add_zip }}"><a href="/media/{{ cdrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+							
+							<div class="en_banner sanserif12px">{% if cdrecord.banner1_static != "" %}<a href="/media/{{ cdrecord.banner1_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner1_cell }}&nbsp;{{ cdrecord.banner1 }}</a>{% elif cdrecord.banner1_swf = "" and cdrecord.banner1_html = "" %}<a href="{{ cdrecord.banner1_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner1_cell }}&nbsp;{{ cdrecord.banner1 }}</a>{% else %}<a href="/media/{{ cdrecord.banner1_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner1_cell }}&nbsp;{{ cdrecord.banner1 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner2_static != "" %}<a href="/media/{{ cdrecord.banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner2_cell }}&nbsp;{{ cdrecord.banner2 }}</a>{% elif cdrecord.banner2_swf = "" and cdrecord.banner2_html = "" %}<a href="{{ cdrecord.banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner2_cell }}&nbsp;{{ cdrecord.banner2 }}</a>{% else %}<a href="/media/{{ cdrecord.banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner2_cell }}&nbsp;{{ cdrecord.banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner3_static != "" %}<a href="/media/{{ cdrecord.banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner3_cell }}&nbsp;{{ cdrecord.banner3 }}</a>{% elif cdrecord.banner3_swf = "" and cdrecord.banner3_html = "" %}<a href="{{ cdrecord.banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner3_cell }}&nbsp;{{ cdrecord.banner3 }}</a>{% else %}<a href="/media/{{ cdrecord.banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner3_cell }}&nbsp;{{ cdrecord.banner3 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner4_static != "" %}<a href="/media/{{ cdrecord.banner4_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner4_cell }}&nbsp;{{ cdrecord.banner4 }}</a>{% elif cdrecord.banner4_swf = "" and cdrecord.banner4_html = "" %}<a href="{{ cdrecord.banner4_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner4_cell }}&nbsp;{{ cdrecord.banner4 }}</a>{% else %}<a href="/media/{{ cdrecord.banner4_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner4_cell }}&nbsp;{{ cdrecord.banner4 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner5_static != "" %}<a href="/media/{{ cdrecord.banner5_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner5_cell }}&nbsp;{{ cdrecord.banner5 }}</a>{% elif cdrecord.banner5_swf = "" and cdrecord.banner5_html = "" %}<a href="{{ cdrecord.banner5_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner5_cell }}&nbsp;{{ cdrecord.banner5 }}</a>{% else %}<a href="/media/{{ cdrecord.banner5_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner5_cell }}&nbsp;{{ cdrecord.banner5 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner6_static != "" %}<a href="/media/{{ cdrecord.banner6_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner6_cell }}&nbsp;{{ cdrecord.banner6 }}</a>{% elif cdrecord.banner6_swf = "" and cdrecord.banner6_html = "" %}<a href="{{ cdrecord.banner6_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner6_cell }}&nbsp;{{ cdrecord.banner6 }}</a>{% else %}<a href="/media/{{ cdrecord.banner6_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner6_cell }}&nbsp;{{ cdrecord.banner6 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner7_static != "" %}<a href="/media/{{ cdrecord.banner7_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner7_cell }}&nbsp;{{ cdrecord.banner7 }}</a>{% elif cdrecord.banner7_swf = "" and cdrecord.banner7_html = "" %}<a href="{{ cdrecord.banner7_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner7_cell }}&nbsp;{{ cdrecord.banner7 }}</a>{% else %}<a href="/media/{{ cdrecord.banner7_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner7_cell }}&nbsp;{{ cdrecord.banner7 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.banner8_static != "" %}<a href="/media/{{ cdrecord.banner8_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner8_cell }}&nbsp;{{ cdrecord.banner8 }}</a>{% elif cdrecord.banner8_swf = "" and cdrecord.banner8_html = "" %}<a href="{{ cdrecord.banner8_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner8_cell }}&nbsp;{{ cdrecord.banner8 }}</a>{% else %}<a href="/media/{{ cdrecord.banner8_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.banner8_cell }}&nbsp;{{ cdrecord.banner8 }}</a>{% endif %}
+							</div>
+
+
+							<div class="en_banner sanserif12px">{% if cdrecord.misc_banner_static != "" %}<a href="/media/{{ cdrecord.misc_banner_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner_cell }}&nbsp;{{ cdrecord.misc_banner }}</a>{% elif cdrecord.misc_banner_swf = "" and cdrecord.misc_banner_html = "" %}<a href="{{ cdrecord.misc_banner_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner_cell }}&nbsp;{{ cdrecord.misc_banner }}</a>{% else %}<a href="/media/{{ cdrecord.misc_banner_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner_cell }}&nbsp;{{ cdrecord.misc_banner }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.misc_banner2_static != "" %}<a href="/media/{{ cdrecord.misc_banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner2_cell }}&nbsp;{{ cdrecord.misc_banner2 }}</a>{% elif cdrecord.misc_banner2_swf = "" and cdrecord.misc_banner2_html = "" %}<a href="{{ cdrecord.misc_banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner2_cell }}&nbsp;{{ cdrecord.misc_banner2 }}</a>{% else %}<a href="/media/{{ cdrecord.misc_banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner2_cell }}&nbsp;{{ cdrecord.misc_banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cdrecord.misc_banner3_static != "" %}<a href="/media/{{ cdrecord.misc_banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner3_cell }}&nbsp;{{ cdrecord.misc_banner3 }}</a>{% elif cdrecord.misc_banner3_swf = "" and cdrecord.misc_banner3_html = "" %}<a href="{{ cdrecord.misc_banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner3_cell }}&nbsp;{{ cdrecord.misc_banner3 }}</a>{% else %}<a href="/media/{{ cdrecord.misc_banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cdrecord.cell_number }}{{ cdrecord.misc_banner3_cell }}&nbsp;{{ cdrecord.misc_banner3 }}</a>{% endif %}
+							</div>
+						</div>
+					</div>
+				{% endfor %}{% else %}{% endif %}
+				</div>
+			</div>
+			
+			<div class="body_col">
+			  
+				<div id="cm_div" class="column_hdr bighdr16px grey" style="margin-top:15px;">Coded Assets</div>
+				{% if cmrecords %}
+				{% for cmrecord in cmrecords %}
+					<div class="entry_box_wrapper {{cmrecord.visibility }}">
+						<div id="cm_round{{ cmrecord.post_round }}" title="{{ cmrecord.date }}" class="entry_header sanserif12pxbd 
+						{{ cmrecord.post_type }}{{ cmrecord.post_round }}" style="line-height:2;"><hr />Coded Asset Round&nbsp;{{ cmrecord.post_round }} &#151; {{ cmrecord.date|date:"F d, Y" }}</div>
+						<div class="entry_title sanserif12px">{% if cmrecord.docfile = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
+							{{ cmrecord.post_title }}{% elif cmrecord.docfile = "" %}<a href="{{ cmrecord.url_link }}" 
+							target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="/media/{{ cmrecord.docfile }}" 
+							target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% endif %}
+						</div>
+
+						<div class="entry_link_bar" style="margin-bottom:5px;">
+							<div class="en_misc sanserif12px {{ cmrecord.add_misc }}"><a href="/media/{{ cmrecord.link_misc }}" target="_blank" class="showlink">{{ cmrecord.misc_link }}</a></div>
+							<div class="en_misc2 sanserif12px {{ cmrecord.add_misc2 }}"><a href="/media/{{ cmrecord.link_misc2 }}" target="_blank" class="showlink">{{ cmrecord.misc_link2 }}</a></div>
+							<div class="en_html sanserif12px {{ cmrecord.add_html }}"><a href="/media/{{ cmrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+							<div class="en_mobile sanserif12px {{ cmrecord.add_mobile_view }}"><a href="{{ cmrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
+							<div class="en_pdf sanserif12px {{ cmrecord.add_pdf }}"><a href="/media/{{ cmrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+							<div class="en_report sanserif12px {{ cmrecord.add_report }}"><a href="/media/{{ cmrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+							<div class="en_text sanserif12px {{ cmrecord.add_text }}"><a href="/media/{{ cmrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+							<div class="en_zip sanserif12px {{ cmrecord.add_zip }}"><a href="/media/{{ cmrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+							
+							<div class="en_banner sanserif12px">{% if cmrecord.banner1_static != "" %}<a href="/media/{{ cmrecord.banner1_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner1_cell }}&nbsp;{{ cmrecord.banner1 }}</a>{% elif cmrecord.banner1_swf = "" and cmrecord.banner1_html = "" %}<a href="{{ cmrecord.banner1_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner1_cell }}&nbsp;{{ cmrecord.banner1 }}</a>{% else %}<a href="/media/{{ cmrecord.banner1_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner1_cell }}&nbsp;{{ cmrecord.banner1 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner2_static != "" %}<a href="/media/{{ cmrecord.banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner2_cell }}&nbsp;{{ cmrecord.banner2 }}</a>{% elif cmrecord.banner2_swf = "" and cmrecord.banner2_html = "" %}<a href="{{ cmrecord.banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner2_cell }}&nbsp;{{ cmrecord.banner2 }}</a>{% else %}<a href="/media/{{ cmrecord.banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner2_cell }}&nbsp;{{ cmrecord.banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner3_static != "" %}<a href="/media/{{ cmrecord.banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner3_cell }}&nbsp;{{ cmrecord.banner3 }}</a>{% elif cmrecord.banner3_swf = "" and cmrecord.banner3_html = "" %}<a href="{{ cmrecord.banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner3_cell }}&nbsp;{{ cmrecord.banner3 }}</a>{% else %}<a href="/media/{{ cmrecord.banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner3_cell }}&nbsp;{{ cmrecord.banner3 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner4_static != "" %}<a href="/media/{{ cmrecord.banner4_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner4_cell }}&nbsp;{{ cmrecord.banner4 }}</a>{% elif cmrecord.banner4_swf = "" and cmrecord.banner4_html = "" %}<a href="{{ cmrecord.banner4_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner4_cell }}&nbsp;{{ cmrecord.banner4 }}</a>{% else %}<a href="/media/{{ cmrecord.banner4_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner4_cell }}&nbsp;{{ cmrecord.banner4 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner5_static != "" %}<a href="/media/{{ cmrecord.banner5_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner5_cell }}&nbsp;{{ cmrecord.banner5 }}</a>{% elif cmrecord.banner5_swf = "" and cmrecord.banner5_html = "" %}<a href="{{ cmrecord.banner5_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner5_cell }}&nbsp;{{ cmrecord.banner5 }}</a>{% else %}<a href="/media/{{ cmrecord.banner5_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner5_cell }}&nbsp;{{ cmrecord.banner5 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner6_static != "" %}<a href="/media/{{ cmrecord.banner6_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner6_cell }}&nbsp;{{ cmrecord.banner6 }}</a>{% elif cmrecord.banner6_swf = "" and cmrecord.banner6_html = "" %}<a href="{{ cmrecord.banner6_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner6_cell }}&nbsp;{{ cmrecord.banner6 }}</a>{% else %}<a href="/media/{{ cmrecord.banner6_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner6_cell }}&nbsp;{{ cmrecord.banner6 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner7_static != "" %}<a href="/media/{{ cmrecord.banner7_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner7_cell }}&nbsp;{{ cmrecord.banner7 }}</a>{% elif cmrecord.banner7_swf = "" and cmrecord.banner7_html = "" %}<a href="{{ cmrecord.banner7_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner7_cell }}&nbsp;{{ cmrecord.banner7 }}</a>{% else %}<a href="/media/{{ cmrecord.banner7_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner7_cell }}&nbsp;{{ cmrecord.banner7 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.banner8_static != "" %}<a href="/media/{{ cmrecord.banner8_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner8_cell }}&nbsp;{{ cmrecord.banner8 }}</a>{% elif cmrecord.banner8_swf = "" and cmrecord.banner8_html = "" %}<a href="{{ cmrecord.banner8_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner8_cell }}&nbsp;{{ cmrecord.banner8 }}</a>{% else %}<a href="/media/{{ cmrecord.banner8_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.banner8_cell }}&nbsp;{{ cmrecord.banner8 }}</a>{% endif %}
+							</div>
+
+
+							<div class="en_banner sanserif12px">{% if cmrecord.misc_banner_static != "" %}<a href="/media/{{ cmrecord.misc_banner_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner_cell }}&nbsp;{{ cmrecord.misc_banner }}</a>{% elif cmrecord.misc_banner_swf = "" and cmrecord.misc_banner_html = "" %}<a href="{{ cmrecord.misc_banner_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner_cell }}&nbsp;{{ cmrecord.misc_banner }}</a>{% else %}<a href="/media/{{ cmrecord.misc_banner_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner_cell }}&nbsp;{{ cmrecord.misc_banner }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.misc_banner2_static != "" %}<a href="/media/{{ cmrecord.misc_banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner2_cell }}&nbsp;{{ cmrecord.misc_banner2 }}</a>{% elif cmrecord.misc_banner2_swf = "" and cmrecord.misc_banner2_html = "" %}<a href="{{ cmrecord.misc_banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner2_cell }}&nbsp;{{ cmrecord.misc_banner2 }}</a>{% else %}<a href="/media/{{ cmrecord.misc_banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner2_cell }}&nbsp;{{ cmrecord.misc_banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if cmrecord.misc_banner3_static != "" %}<a href="/media/{{ cmrecord.misc_banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner3_cell }}&nbsp;{{ cmrecord.misc_banner3 }}</a>{% elif cmrecord.misc_banner3_swf = "" and cmrecord.misc_banner3_html = "" %}<a href="{{ cmrecord.misc_banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner3_cell }}&nbsp;{{ cmrecord.misc_banner3 }}</a>{% else %}<a href="/media/{{ cmrecord.misc_banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ cmrecord.cell_number }}{{ cmrecord.misc_banner3_cell }}&nbsp;{{ cmrecord.misc_banner3 }}</a>{% endif %}
+							</div>
+						</div>
+					</div>
+				
+				{% endfor %}{% else %}{% endif %}
+				
+				<div id="m_div" class="column_hdr bighdr16px grey" style="margin-top:15px;margin-bottom:0;">Print Mechanicals</div>
+				
+				{% if mrecords %}
+				{% for mrecord in mrecords %}
+					<div class="entry_box_wrapper {{ mrecord.visibility }}">
+						<div id="m_round{{ mrecord.post_round }}" title="{{ mrecord.date }}" class="entry_header sanserif12pxbd 
+						{{ mrecord.post_type }}{{ mrecord.post_round }}" style="line-height:2;"><hr />Print Mechanical Round&nbsp;{{ mrecord.post_round }} &#151; {{ mrecord.date|date:"F d, Y" }}</div>
+						<div class="entry_title sanserif12px">{% if mrecord.docfile = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
+							{{ mrecord.post_title }}{% elif mrecord.docfile = "" %}<a href="{{ mrecord.url_link }}" 
+							target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.docfile }}" 
+							target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% endif %}
+						</div>
+						
+						
+						<div class="entry_link_bar" style="margin-bottom:5px;">
+							<div class="en_misc sanserif12px {{ mrecord.add_misc }}"><a href="/media/{{ mrecord.link_misc }}" target="_blank" class="showlink">{{ mrecord.misc_link }}</a></div>
+							<div class="en_misc2 sanserif12px {{ mrecord.add_misc2 }}"><a href="/media/{{ mrecord.link_misc2 }}" target="_blank" class="showlink">{{ mrecord.misc_link2 }}</a></div>
+							<div class="en_html sanserif12px {{ mrecord.add_html }}"><a href="/media/{{ mrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+							<div class="en_pdf sanserif12px {{ mrecord.add_pdf }}"><a href="/media/{{ mrecord.link_pdf }}" target="_blank">pdf</a></div>
+							<div class="en_report sanserif12px {{ mrecord.add_report }}"><a href="/media/{{ mrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+							<div class="en_text sanserif12px {{ mrecord.add_text }}"><a href="/media/{{ mrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+							<div class="en_zip sanserif12px {{ mrecord.add_zip }}"><a href="/media/{{ mrecord.link_zip }}" target="_blank">zip</a></div>
+							
+							<div class="en_banner sanserif12px">{% if mrecord.banner1_static != "" %}<a href="/media/{{ mrecord.banner1_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner1_cell }}&nbsp;{{ mrecord.banner1 }}</a>{% elif mrecord.banner1_swf = "" and mrecord.banner1_html = "" %}<a href="{{ mrecord.banner1_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner1_cell }}&nbsp;{{ mrecord.banner1 }}</a>{% else %}<a href="/media/{{ mrecord.banner1_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner1_cell }}&nbsp;{{ mrecord.banner1 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner2_static != "" %}<a href="/media/{{ mrecord.banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner2_cell }}&nbsp;{{ mrecord.banner2 }}</a>{% elif mrecord.banner2_swf = "" and mrecord.banner2_html = "" %}<a href="{{ mrecord.banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner2_cell }}&nbsp;{{ mrecord.banner2 }}</a>{% else %}<a href="/media/{{ mrecord.banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner2_cell }}&nbsp;{{ mrecord.banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner3_static != "" %}<a href="/media/{{ mrecord.banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner3_cell }}&nbsp;{{ mrecord.banner3 }}</a>{% elif mrecord.banner3_swf = "" and mrecord.banner3_html = "" %}<a href="{{ mrecord.banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner3_cell }}&nbsp;{{ mrecord.banner3 }}</a>{% else %}<a href="/media/{{ mrecord.banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner3_cell }}&nbsp;{{ mrecord.banner3 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner4_static != "" %}<a href="/media/{{ mrecord.banner4_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner4_cell }}&nbsp;{{ mrecord.banner4 }}</a>{% elif mrecord.banner4_swf = "" and mrecord.banner4_html = "" %}<a href="{{ mrecord.banner4_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner4_cell }}&nbsp;{{ mrecord.banner4 }}</a>{% else %}<a href="/media/{{ mrecord.banner4_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner4_cell }}&nbsp;{{ mrecord.banner4 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner5_static != "" %}<a href="/media/{{ mrecord.banner5_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner5_cell }}&nbsp;{{ mrecord.banner5 }}</a>{% elif mrecord.banner5_swf = "" and mrecord.banner5_html = "" %}<a href="{{ mrecord.banner5_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner5_cell }}&nbsp;{{ mrecord.banner5 }}</a>{% else %}<a href="/media/{{ mrecord.banner5_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner5_cell }}&nbsp;{{ mrecord.banner5 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner6_static != "" %}<a href="/media/{{ mrecord.banner6_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner6_cell }}&nbsp;{{ mrecord.banner6 }}</a>{% elif mrecord.banner6_swf = "" and mrecord.banner6_html = "" %}<a href="{{ mrecord.banner6_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner6_cell }}&nbsp;{{ mrecord.banner6 }}</a>{% else %}<a href="/media/{{ mrecord.banner6_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner6_cell }}&nbsp;{{ mrecord.banner6 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner7_static != "" %}<a href="/media/{{ mrecord.banner7_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner7_cell }}&nbsp;{{ mrecord.banner7 }}</a>{% elif mrecord.banner7_swf = "" and mrecord.banner7_html = "" %}<a href="{{ mrecord.banner7_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner7_cell }}&nbsp;{{ mrecord.banner7 }}</a>{% else %}<a href="/media/{{ mrecord.banner7_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner7_cell }}&nbsp;{{ mrecord.banner7 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.banner8_static != "" %}<a href="/media/{{ mrecord.banner8_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner8_cell }}&nbsp;{{ mrecord.banner8 }}</a>{% elif mrecord.banner8_swf = "" and mrecord.banner8_html = "" %}<a href="{{ mrecord.banner8_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner8_cell }}&nbsp;{{ mrecord.banner8 }}</a>{% else %}<a href="/media/{{ mrecord.banner8_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.banner8_cell }}&nbsp;{{ mrecord.banner8 }}</a>{% endif %}
+							</div>
+							
+							
+							<div class="en_banner sanserif12px">{% if mrecord.misc_banner_static != "" %}<a href="/media/{{ mrecord.misc_banner_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner_cell }}&nbsp;{{ mrecord.misc_banner }}</a>{% elif mrecord.misc_banner_swf = "" and mrecord.misc_banner_html = "" %}<a href="{{ mrecord.misc_banner_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner_cell }}&nbsp;{{ mrecord.misc_banner }}</a>{% else %}<a href="/media/{{ mrecord.misc_banner_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner_cell }}&nbsp;{{ mrecord.misc_banner }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.misc_banner2_static != "" %}<a href="/media/{{ mrecord.misc_banner2_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner2_cell }}&nbsp;{{ mrecord.misc_banner2 }}</a>{% elif mrecord.misc_banner2_swf = "" and mrecord.misc_banner2_html = "" %}<a href="{{ mrecord.misc_banner2_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner2_cell }}&nbsp;{{ mrecord.misc_banner2 }}</a>{% else %}<a href="/media/{{ mrecord.misc_banner2_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner2_cell }}&nbsp;{{ mrecord.misc_banner2 }}</a>{% endif %}
+							</div>
+							<div class="en_banner sanserif12px">{% if mrecord.misc_banner3_static != "" %}<a href="/media/{{ mrecord.misc_banner3_static }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner3_cell }}&nbsp;{{ mrecord.misc_banner3 }}</a>{% elif mrecord.misc_banner3_swf = "" and mrecord.misc_banner3_html = "" %}<a href="{{ mrecord.misc_banner3_url }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner3_cell }}&nbsp;{{ mrecord.misc_banner3 }}</a>{% else %}<a href="/media/{{ mrecord.misc_banner3_html }}" 
+								target="_blank" class="showlink">-&nbsp;{{ mrecord.cell_number }}{{ mrecord.misc_banner3_cell }}&nbsp;{{ mrecord.misc_banner3 }}</a>{% endif %}
+							</div>
+						</div>
+						
+					</div>
+				{% endfor %}{% else %}{% endif %}
+	  
+			</div>
+			
+			<div class="body_col_right">
+				<div id="fr_div" class="column_hdr bighdr16px green" style="margin-top:15px;">Final Release</div>
+				{% if frrecords %}
+				{% for frrecord in frrecords %}
+					
+						
+						<div class="entry_box_wrapper {{ frrecord.visibility }}">
+							<div id="{{ frrecord.post_type }}" title="{{ frrecord.date }}" class="entry_header sanserif12pxbd 
+							{{ frrecord.post_type }}" style="line-height:2;"><hr />{% if frrecord.is_rerelease = 1 %}<div style="margin-top:15px;"><span style="display:block;margin:0;line-height:.6;">ReRelease</span>{{ frrecord.date|date:"F d, Y" }}</div>{% else %}{{ frrecord.date|date:"F d, Y" }}{% endif %}
+							</div>
+							
+							<div class="entry_title sanserif12px">{% if frrecord.docfile = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
+								{{ frrecord.post_title }}{% elif frrecord.docfile = "" %}<a href="{{ frrecord.url_link }}" 
+								target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.docfile }}" 
+								target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% endif %}
+							</div>
+
+							<div class="entry_link_bar" style="margin-bottom:5px;">
+								<div class="en_misc sanserif12px {{ frrecord.add_misc }}"><a href="/media/{{ frrecord.link_misc }}" target="_blank" class="showlink">{{ frrecord.misc_link }}</a></div>
+								<div class="en_misc2 sanserif12px {{ frrecord.add_misc2 }}"><a href="/media/{{ frrecord.link_misc2 }}" target="_blank" class="showlink">{{ frrecord.misc_link2 }}</a></div>
+								<div class="en_html sanserif12px {{ frrecord.add_html }}"><a href="/media/{{ frrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+								<div class="en_mobile sanserif12px {{ frrecord.add_mobile_view }}"><a href="{{ frrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
+								<div class="en_pdf sanserif12px {{ frrecord.add_pdf }}"><a href="/media/{{ frrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+								<div class="en_report sanserif12px {{ frrecord.add_report }}"><a href="/media/{{ frrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+								<div class="en_text sanserif12px {{ frrecord.add_text }}"><a href="/media/{{ frrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+								<div class="en_zip sanserif12px {{ frrecord.add_zip }}"><a href="/media/{{ frrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+								
+								<div class="en_banner sanserif12px">{% if frrecord.banner1_static != "" %}<a href="/media/{{ frrecord.banner1_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner1_cell }}&nbsp;{{ frrecord.banner1 }}</a>{% elif frrecord.banner1_swf = "" and frrecord.banner1_html = "" %}<a href="{{ frrecord.banner1_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner1_cell }}&nbsp;{{ frrecord.banner1 }}</a>{% else %}<a href="/media/{{ frrecord.banner1_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner1_cell }}&nbsp;{{ frrecord.banner1 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner2_static != "" %}<a href="/media/{{ frrecord.banner2_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner2_cell }}&nbsp;{{ frrecord.banner2 }}</a>{% elif frrecord.banner2_swf = "" and frrecord.banner2_html = "" %}<a href="{{ frrecord.banner2_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner2_cell }}&nbsp;{{ frrecord.banner2 }}</a>{% else %}<a href="/media/{{ frrecord.banner2_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner2_cell }}&nbsp;{{ frrecord.banner2 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner3_static != "" %}<a href="/media/{{ frrecord.banner3_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner3_cell }}&nbsp;{{ frrecord.banner3 }}</a>{% elif frrecord.banner3_swf = "" and frrecord.banner3_html = "" %}<a href="{{ frrecord.banner3_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner3_cell }}&nbsp;{{ frrecord.banner3 }}</a>{% else %}<a href="/media/{{ frrecord.banner3_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner3_cell }}&nbsp;{{ frrecord.banner3 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner4_static != "" %}<a href="/media/{{ frrecord.banner4_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner4_cell }}&nbsp;{{ frrecord.banner4 }}</a>{% elif frrecord.banner4_swf = "" and frrecord.banner4_html = "" %}<a href="{{ frrecord.banner4_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner4_cell }}&nbsp;{{ frrecord.banner4 }}</a>{% else %}<a href="/media/{{ frrecord.banner4_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner4_cell }}&nbsp;{{ frrecord.banner4 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner5_static != "" %}<a href="/media/{{ frrecord.banner5_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner5_cell }}&nbsp;{{ frrecord.banner5 }}</a>{% elif frrecord.banner5_swf = "" and frrecord.banner5_html = "" %}<a href="{{ frrecord.banner5_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner5_cell }}&nbsp;{{ frrecord.banner5 }}</a>{% else %}<a href="/media/{{ frrecord.banner5_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner5_cell }}&nbsp;{{ frrecord.banner5 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner6_static != "" %}<a href="/media/{{ frrecord.banner6_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner6_cell }}&nbsp;{{ frrecord.banner6 }}</a>{% elif frrecord.banner6_swf = "" and frrecord.banner6_html = "" %}<a href="{{ frrecord.banner6_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner6_cell }}&nbsp;{{ frrecord.banner6 }}</a>{% else %}<a href="/media/{{ frrecord.banner6_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner6_cell }}&nbsp;{{ frrecord.banner6 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner7_static != "" %}<a href="/media/{{ frrecord.banner7_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner7_cell }}&nbsp;{{ frrecord.banner7 }}</a>{% elif frrecord.banner7_swf = "" and frrecord.banner7_html = "" %}<a href="{{ frrecord.banner7_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner7_cell }}&nbsp;{{ frrecord.banner7 }}</a>{% else %}<a href="/media/{{ frrecord.banner7_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner7_cell }}&nbsp;{{ frrecord.banner7 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.banner8_static != "" %}<a href="/media/{{ frrecord.banner8_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner8_cell }}&nbsp;{{ frrecord.banner8 }}</a>{% elif frrecord.banner8_swf = "" and frrecord.banner8_html = "" %}<a href="{{ frrecord.banner8_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner8_cell }}&nbsp;{{ frrecord.banner8 }}</a>{% else %}<a href="/media/{{ frrecord.banner8_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.banner8_cell }}&nbsp;{{ frrecord.banner8 }}</a>{% endif %}
+								</div>
+
+
+								<div class="en_banner sanserif12px">{% if frrecord.misc_banner_static != "" %}<a href="/media/{{ frrecord.misc_banner_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner_cell }}&nbsp;{{ frrecord.misc_banner }}</a>{% elif frrecord.misc_banner_swf = "" and frrecord.misc_banner_html = "" %}<a href="{{ frrecord.misc_banner_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner_cell }}&nbsp;{{ frrecord.misc_banner }}</a>{% else %}<a href="/media/{{ frrecord.misc_banner_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner_cell }}&nbsp;{{ frrecord.misc_banner }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.misc_banner2_static != "" %}<a href="/media/{{ frrecord.misc_banner2_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner2_cell }}&nbsp;{{ frrecord.misc_banner2 }}</a>{% elif frrecord.misc_banner2_swf = "" and frrecord.misc_banner2_html = "" %}<a href="{{ frrecord.misc_banner2_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner2_cell }}&nbsp;{{ frrecord.misc_banner2 }}</a>{% else %}<a href="/media/{{ frrecord.misc_banner2_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner2_cell }}&nbsp;{{ frrecord.misc_banner2 }}</a>{% endif %}
+								</div>
+								<div class="en_banner sanserif12px">{% if frrecord.misc_banner3_static != "" %}<a href="/media/{{ frrecord.misc_banner3_static }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner3_cell }}&nbsp;{{ frrecord.misc_banner3 }}</a>{% elif frrecord.misc_banner3_swf = "" and frrecord.misc_banner3_html = "" %}<a href="{{ frrecord.misc_banner3_url }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner3_cell }}&nbsp;{{ frrecord.misc_banner3 }}</a>{% else %}<a href="/media/{{ frrecord.misc_banner3_html }}" 
+									target="_blank" class="showlink">-&nbsp;{{ frrecord.cell_number }}{{ frrecord.misc_banner3_cell }}&nbsp;{{ frrecord.misc_banner3 }}</a>{% endif %}
+								</div>
+							</div>
+						
+					</div>
+				{% endfor %}{% else %}{% endif %}
+			    
+			</div>      
+    	
+    </div>
+    <div id="resizable"></div>
+	<script type="text/javascript">
+		displayLink();
+		
+		function removePost(){
+			$('.hidden').remove();
+		}
+		removePost();
+		function formatContacts(){
+			var contacts = $(".contact_box").children();
+			var count = 1;
+			for (i=0; i<contacts.length; i++){
+			contacts[i].setAttribute("id", "contact_box_wrapper" + count++);
+			}
+		}
+		formatContacts();
+		function multofthree(x){
+			if (x !== 1 && x % 3 == 0 ){
+				console.log(1);
+			}else{
+				console.log(0);
+		}
+	}
+	multofthree(27);
+	</script>
+</body>
+</html>

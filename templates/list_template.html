@@ -5,31 +5,25 @@
 
 
 
-		{% block title %} ACME Posting Module{% endblock %}
 		
-		{% block link %}
-		<link href="../../../../site_media/css/bootstrap.min.css" rel="stylesheet" />
-		<link href="../../../../site_media/css/posting.css" rel="stylesheet" /> 
-		{% endblock %}
+		<!-- <link href="../../../../site_media/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="../../../../site_media/css/posting.css" rel="stylesheet" />  -->
 
 
 
 {% block content %}
-	<iframe id="inbox_frame" src="../../production-display/1/" width="100%" height="100%"></iframe>
-	<div id="stage">
+	<iframe id="inbox_frame" src="../../production-display/{{ user.userprofile.id }}/" width="100%" height="100%"></iframe>
+	<div class="container">
 		<script type="text/javascript">
 		function resetForm(){
-			window.location = "http://acme.chukesinteractive.com/main/";
+			window.location = "/main/";
 		}
 		</script>
-		<div id="logo_wrapper">
-		<span id="logo_temp" class=""></span>
-		</div>
-		<div class="" style="position:relative;display:block;left:0;top:30px;margin-bottom:25px;z-index:5000;">
+		<div class="row">
 			<table style="margin-left:0;">
 				<tr>
 					<td valign="top" style="padding-right:0;">
-						<h6>Enter your job number or company name here:</h6>
+						<h6>Enter client or project id here:</h6>
 					</td> 
 					<td align="left">
 				 		<form id="RecordSearchForm" method="get" action="." style="width:400px;margin:0;"> {% csrf_token %}
@@ -42,91 +36,95 @@
 							 </table>
 						  </form>
 			  		 </td>
-					</tr>
-				</table>
-			  
+				</tr>
+			</table>
 		</div>
-    	<div id="headerbox">
-			{% if records or precords or orders %}
-            <div class="contact_information sanserif12pxbd" style="color:#555;margin-bottom:15px;">query returned the following results:</div>
+		<div class="row">
+			<div id="headerbox">
+				{% if records or precords or orders %}
+	            <div class="contact_information sanserif12pxbd" style="color:#555;margin-bottom:15px;">query returned the following results:</div>
 
-			<div class="contact_box">
-				
-				<table id="list_table" class="tablesorter-bootstrap">
-				  <thead>
-					<tr>
-						<th>client</th>
-						<th>project id</th>
-						<th>project name</th>
-						<th>page type</th>
-						<th>create date</th>
-					</tr>
-				  </thead>
-				  <tbody>
-						
-						{% for record in records %}
-					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-						<td>{{ record.client }}</td>
-						<td>{{ record.job_number }}</td>
-						<td><a href="/../specdisplay/{{ record.job_number }}/" target="_blank">{{ record.job_name }}</a><a href="/../portdisplay/{{ record.job_number  }}/" target="_blank">{{ record.project_name }}</a><a href="/../releaseddisplay/{{ record.portal_code }}/" target="_blank">{{ record.releasedproject_name }}</a><a href="/../bannerdisplay/{{ record.client }}/{{ record.id }}" target="_blank">{{ record.page_name }}</a></td>
-						<td>{{ record.page_type }}</td>
-						<td>{{ record.create_date }}</td>
-					</tr>
-						{% endfor %}
+				<div class="contact_box">
 					
-						{% for precord in precords %}
-					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-						<td>{{ precord.client }}</td>
-						<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_number }}</a></td>
-						<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_name }}</a></td>
-						<td>{{ precord.page_type }}</td>
-						<td>{{ precord.create_date }}</td>
-					</tr>
-						{% endfor %}
+					<table id="list_table" class="tablesorter-bootstrap">
+					  <thead>
+						<tr>
+							<th>client</th>
+							<th>project id</th>
+							<th>project name</th>
+							<th>page type</th>
+							<th>create date</th>
+						</tr>
+					  </thead>
+					  <tbody>
+							
+							{% for record in records %}
+						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
+							<td>{{ record.client }}</td>
+							<td>{{ record.job_number }}</td>
+							<td><a href="/../specdisplay/{{ record.job_number }}/" target="_blank">{{ record.job_name }}</a><a href="/../portdisplay/{{ record.job_number  }}/" target="_blank">{{ record.project_name }}</a><a href="/../releaseddisplay/{{ record.portal_code }}/" target="_blank">{{ record.releasedproject_name }}</a><a href="/../bannerdisplay/{{ record.client }}/{{ record.id }}" target="_blank">{{ record.page_name }}</a></td>
+							<td>{{ record.page_type }}</td>
+							<td>{{ record.create_date }}</td>
+						</tr>
+							{% endfor %}
 						
-						
-						{% for order in orders %}
-					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-						<td>{{ order.client }}</td>
-						<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_number }}</a></td>
-						<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_name }}</a></td>
-						<td>{{ order.page_type }}</td>
-						<td>{{ order.create_date }}</td>
-					</tr>
-						{% endfor %}
-						
-					</tbody>
-				</table>
-				<script type="text/javascript">
-				function addScroll(postnumber){
-					if (postnumber == 30 || postnumber == 40){
-						document.getElementById('html').style.overflow = "visible";
-					}else{
-						document.getElementById('html').style.overflow = "hidden";
+							{% for precord in precords %}
+						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
+							<td>{{ precord.client }}</td>
+							<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_number }}</a></td>
+							<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_name }}</a></td>
+							<td>{{ precord.page_type }}</td>
+							<td>{{ precord.create_date }}</td>
+						</tr>
+							{% endfor %}
+							
+							
+							{% for order in orders %}
+						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
+							<td>{{ order.client }}</td>
+							<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_number }}</a></td>
+							<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_name }}</a></td>
+							<td>{{ order.page_type }}</td>
+							<td>{{ order.create_date }}</td>
+						</tr>
+							{% endfor %}
+							
+						</tbody>
+					</table>
+					<script type="text/javascript">
+					function addScroll(postnumber){
+						if (postnumber == 30 || postnumber == 40){
+							document.getElementById('html').style.overflow = "visible";
+						}else{
+							document.getElementById('html').style.overflow = "hidden";
+						}
 					}
-				}
-				</script>
-				<div id="pager" class="pager">
-				  <form>
-				    <img src="/site_media/images/pager_icons/first.png" class="first"/>
-				    <img src="/site_media/images/pager_icons/prev.png" class="prev"/>
-				    <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-				    <img src="/site_media/images/pager_icons/next.png" class="next"/>
-				    <img src="/site_media/images/pager_icons/last.png" class="last"/>
-				    <select class="pagesize" onChange="addScroll(this.value);">
-				      <option selected="selected" value="10">10</option>
-				      <option value="20">20</option>
-				      <option value="30">30</option>
-				      <option value="40">40</option>
-				    </select>
-				  </form>
-				</div>
-				<script type="text/javascript" src="/site_media/js/posting.js"></script>
-			</div>  
-				
- 
-		</div>
+					</script>
+					<div id="pager" class="pager">
+					  <form>
+					    <img src="/site_media/images/pager_icons/first.png" class="first"/>
+					    <img src="/site_media/images/pager_icons/prev.png" class="prev"/>
+					    <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+					    <img src="/site_media/images/pager_icons/next.png" class="next"/>
+					    <img src="/site_media/images/pager_icons/last.png" class="last"/>
+					    <select class="pagesize" onChange="addScroll(this.value);">
+					      <option selected="selected" value="10">10</option>
+					      <option value="20">20</option>
+					      <option value="30">30</option>
+					      <option value="40">40</option>
+					    </select>
+					  </form>
+					</div>
+					<script type="text/javascript" src="/site_media/js/posting.js"></script>
+				</div>  
+					
+	 
+			</div>
 		{% else %}
 		{% endif %}
+			
+		</div>	
+			  
+    	
     </div>
 {% endblock %}
