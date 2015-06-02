@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+     
+{% block content %} 
+<iframe id="inbox_frame" src="" width="100%" height="100%"></iframe> 
+<div class="container tmarg">
+    <div class="row">
+
+
+            <form name="PostEntryForm" action=""  method="POST" enctype="multipart/form-data">{% csrf_token %}{{ form.non_field_errors }}
+                  <div class="col-md-6">
+                      <div class="well">
+                         <div class="fieldWrapper">
+                              {{ form.client|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.job_number|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.cell_number|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.post_title|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.date|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.post_type|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.post_round|as_crispy_field:"bootstrap" }}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="well">
+                         <div class="fieldWrapper">
+                              {{ form.preview_file|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.url_link|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.link_pdf|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.link_html|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.link_report|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.link_text|as_crispy_field:"bootstrap" }}
+                          </div>
+                          <div class="fieldWrapper">
+                              {{ form.link_zip|as_crispy_field:"bootstrap" }}
+                          </div>
+                      </div>
+                  </div>
+                <input type="submit" name="delete" value="Delete" />
+                <input type="submit" value="Submit" />
+            </form>
+
+      
+        
+    </div>
+</div>
+
+
+        {% endblock %}

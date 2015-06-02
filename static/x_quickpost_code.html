@@ -1,0 +1,39 @@
+<script type="text/javascript">
+        jQuery(document).ready(function() {
+            $("#id_date_in").datepicker();
+        });
+        
+        
+        </script>
+        <script type="text/javascript">
+        function dismissAddAnotherPopup(win) {
+            win.close();
+        }
+        function displayLink(){
+            var displaylinks = document.getElementsByClassName('showlink');
+            for(var i=0; i < displaylinks.length; i++){
+                var linklength = displaylinks[i].getAttribute('href').length;
+                var linkvalue = displaylinks[i].getAttribute('href').toString();
+                if ( linklength > 18 || linkvalue.indexOf('http') > -1 ){
+                    displaylinks[i].parentNode.style.display = "inline";
+                    displaylinks[i].parentNode.style.float = "left";
+                    displaylinks[i].parentNode.style.borderRight = "1px solid #000";
+                    displaylinks[i].parentNode.style.textAlign = "center";
+                    displaylinks[i].parentNode.style.padding = "0 5px";
+                }
+
+            }
+
+        }
+        </script>
+        
+        <style type="text/css">
+        .hidden{display:none;}
+        .entry_box_wrapper{width:auto;}
+        .body_col_right{width:320px;max-width:340px;}
+        #identity_box{margin-bottom:10px;}
+        #headerbox{width:auto;height:270px;}
+        #copypath{display:block;font-size:11px;line-height:1.2;font-weight:normal;color:maroon;}
+        th{padding:10px 0;}
+        iframe{min-height:650px;}
+        </style>

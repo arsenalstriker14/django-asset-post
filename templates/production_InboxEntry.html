@@ -290,7 +290,7 @@ label{font-size:1.1em;}
 								</div>
 								<div style="display:table-cell;">
 									<div class="your-button-class"> 
-									<p><input id="inbox_delete_btn" href="../../delete-item/{{ form.id }}/{{ request.user.get_profile.id }}" type="submit" value="delete" /></p> 							  </div>
+									<p><input id="inbox_delete_btn" href="../../delete-item/{{ form.id }}/{{ user.userprofile.id }}" type="submit" value="delete" /></p> 							  </div>
 								</div>
 							</div>
 					</div>  <!-- end css table -->
@@ -321,7 +321,7 @@ label{font-size:1.1em;}
 						{% if creativerecords or studiorecords or records %}
 						{% for record in records %}
 					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-						<td><a href="../../../edit-inbox/{{ record.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td><a href="../../../edit-inbox/{{ record.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
 						<td>{{ record.assigned_by }}</td>
 						<td>{{ record.job_number }}</td>
 						<td>{{ record.cell_number }}</td>
@@ -377,7 +377,7 @@ label{font-size:1.1em;}
 				  <tbody>
 						{% for studiorecord in studiorecords %}
 					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ studiorecord.id }}">
-						<td><a href="../../../edit-inbox/{{ studiorecord.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td><a href="../../../edit-inbox/{{ studiorecord.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
 						<td>{{ studiorecord.assigned_by }}</td>
 						<td>{{ studiorecord.job_number }}</td>
 						<td>{{ studiorecord.cell_number }}</td>
@@ -434,7 +434,7 @@ label{font-size:1.1em;}
 				  <tbody>
 						{% for creativerecord in creativerecords %}
 					<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ creativerecord.id }}">
-						<td><a href="../../../edit-inbox/{{ creativerecord.id }}/{{ request.user.get_profile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+						<td><a href="../../../edit-inbox/{{ creativerecord.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
 						<td>{{ creativerecord.assigned_by }}</td>
 						<td>{{ creativerecord.job_number }}</td>
 						<td>{{ creativerecord.cell_number }}</td>

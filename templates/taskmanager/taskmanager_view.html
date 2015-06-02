@@ -1,0 +1,573 @@
+{% extends "base_nonav.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load taskbox_tags %}
+
+        
+                    {% block head_content %}
+       
+        <link rel="stylesheet" href="{% static 'taskmanager/css/bootstrap-datetimepicker.css' %}" />
+        <link rel="stylesheet" href="{% static 'taskmanager/css/font-awesome.css' %}" />
+        <link rel="stylesheet" href="{% static 'taskmanager/css/tm_styles.css' %}" />
+        <script src="{% static 'taskmanager/js/jquery.1.11.2.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/jquery.tools.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/moment.js' %}"></script>
+        <script src="{% static 'taskmanager/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/bootstrap-datepicker.min.js' %}"></script>
+        <style>
+        /*#taskbox_form{
+            font-size:70%;
+        }*/
+        .urgent{background-color: #FC3838;}
+        .high{background-color: #F2CBCB}
+        .low{background-color: #D8E8E8;}
+        .tab_row{margin:20px 0;padding:10px 15px 0 15px;border-radius: 6px;background-color: #eee;}
+        .tm_form_row{padding:15px 15px 0 15px;border-radius: 6px;background-color: #eee;}
+        .odd{border-radius: 4px;background-color: #ddd}
+        .even{border-radius: 4px;background-color: #efefef}
+        .form-control {
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1;
+            height:80%;
+            margin-bottom: 7px;
+        }
+        .row.no-gutter [class*='col-']:not(:first-child),.row.no-gutter [class*='col-']:not(:last-child) {
+         padding-right:2px;
+         padding-left:2px;
+        }
+        
+        .placeholder{position: relative;display: inline-block;height:53px;}
+         input#inbox_submit_btn, input#inbox_delete_btn{display:inline;width:70px;}
+        </style>
+                       {{ form.media }}
+                        {% endblock %}
+        
+    
+
+                {% block content %}
+    <iframe id="inbox_frame" src="" width="100%" height="100%"></iframe>
+    <div class="container stage">
+        <div class="row no-gutter tm_form_row">
+            
+                <div>
+                    <form id="taskbox_form" action="." method="POST">{% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="col-md-2">
+                                {{ form.assigned_by|as_crispy_field:"bootstrap" }}
+                                <table>
+                                    <tr>
+                                        <td><input id="inbox_submit_btn" onclick="validateForm();" type="submit" value="add" /></td>
+                                        <td><input id="inbox_delete_btn" name="delete" type="submit" value="delete" /></td>
+                                    </tr>
+                                </table>
+                        </div>
+                         <div class="col-md-2">
+                            <div class="well">
+                                {{ form.assigned_to|as_crispy_field:"bootstrap" }}
+                                {{ form.box|as_crispy_field:"bootstrap" }}  
+                            </div>                          
+                        </div>
+                        <div class="col-md-2">
+                            <div class="well">
+                                {{ form.job_number|as_crispy_field:"bootstrap" }}
+                                {{ form.cell_number|as_crispy_field:"bootstrap" }}
+                                {{ form.job_name|as_crispy_field:"bootstrap" }}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="well">
+                                {{ form.request|as_crispy_field:"bootstrap" }}
+                                {{ form.date_due|as_crispy_field:"bootstrap"  }}
+                                {{ form.priority|as_crispy_field:"bootstrap"  }}
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="well">
+                                {{ form.accepted_by|as_crispy_field:"bootstrap" }}
+                                {{ form.status|as_crispy_field:"bootstrap" }}
+                                {{ form.completed_on|as_crispy_field:"bootstrap" }}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="well">
+                                {{ form.note|as_crispy_field:"bootstrap" }} 
+                            </div>
+                        </div>       
+                    </form>
+                </div>
+            
+        </div>
+        <div class="row tab_row">
+           
+                <div class="col-md-12">
+                    <ul id="tbox_menu">
+                        <li id="list_in">{{ user.first_name }}'s Inbox</li>
+                        <li id="list_out">{{ user.first_name }}'s Outbox</li>
+                        {% if boxrecords %}
+                    {% for boxrecord in boxrecords %}
+                        <li id="list_box_{{ boxrecord.id }}">{{ boxrecord.name }}</li>
+                        {% endfor %}
+                        {% else %}
+                        {% endif %}
+                    </ul>
+                </div>
+            
+        </div>
+        <div class="row">
+            <!-- the items -->
+              <div id="personal_tlist" class="tlist">
+                    
+                    <h4>{{ user.first_name }}'s Tasklist</h4>
+                    <table id="personal_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if records %}
+                            {% for record in records %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ record.priority }}" id="_{{ record.id }}">
+                            <td><a href="{% url 'taskmanager:edit_inboxentry' record.id user.userprofile.id  %}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ record.assigned_by.email }}?subject=taskbox:&nbsp;{{ record.job_number }}-{{ record.cell_number }}&nbsp;&nbsp;{{ record.job_name }}">{{ record.assigned_by }}</a></td>
+                            <td>{{ record.job_number }}</td>
+                            <td>{{ record.cell_number }}</td>
+                            <td>{{ record.job_name }}</td>
+                            <td>{{ record.request }}</td>
+                            <td><div class="note"><a title="{{ record.note }}" href="#">{{ record.note }}</a></div></td>
+                            <td>{{ record.date_due }}</td>
+                            <td><a href="mailto:{{ record.accepted_by.email }}?subject=taskbox:&nbsp;{{ record.job_number }}-{{ record.cell_number }}&nbsp;&nbsp;{{ record.job_name }}">{{ record.accepted_by }}</a></td>
+                            <td class="status_cell">{{ record.status }}</td>
+                            <td> </td>
+                            <td>{{ record.completed_on }}</td>
+                            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+                        </tr>
+                        
+                        
+                      </tbody>
+                    </table>
+              </div>
+              
+              <div id="assigned_tlist" class="tlist">
+                    
+                    <h4>{{ user.first_name }}'s Assigned Tasks</h4>
+                    <table id="assigned_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                        <tbody>
+                                {% if assignedrecords %}
+                                {% for assignedrecord in assignedrecords %}
+                            <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ assignedrecord.priority }}" id="_{{ assignedrecord.id }}">
+                                <td><a href="{% url 'taskmanager:edit_inboxentry' assignedrecord.id user.userprofile.id  %}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                                <td><a href="mailto:{{ assignedrecord.assigned_by.email }}?subject=taskbox:&nbsp;{{ assignedrecord.job_number }}-{{ assignedrecord.cell_number }}&nbsp;&nbsp;{{ assignedrecord.job_name }}">{{ assignedrecord.assigned_by }}</a></td>
+                                <td>{{ assignedrecord.job_number }}</td>
+                                <td>{{ assignedrecord.cell_number }}</td>
+                                <td>{{ assignedrecord.job_name }}</td>
+                                <td>{{ assignedrecord.request }}</td>
+                                <td><div class="note"><a title="{{ assignedrecord.note }}" href="#">{{ assignedrecord.note }}</a></div></td>
+                                <td>{{ assignedrecord.date_due }}</td>
+                                <td><a href="mailto:{{ assignedrecord.accepted_by.email }}?subject=taskbox:&nbsp;{{ assignedrecord.job_number }}-{{ assignedrecord.cell_number }}&nbsp;&nbsp;{{ assignedrecord.job_name }}">{{ assignedrecord.accepted_by }}</a></td>
+                                <td class="status_cell">{{ assignedrecord.status }}</td>
+                                <td> </td>
+                                <td>{{ assignedrecord.completed_on }}</td>
+                            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+                        </tr>
+                        
+                        
+                      </tbody>
+                    </table>
+              </div>
+              
+              
+                    {% if boxrecords %}
+                {% for boxrecord in boxrecords|slice:":1" %}
+              <div id="tlist_{{ boxrecord.id }}" class="tlist">
+                    <h4>{{ boxrecord.name }}</h4>
+                    <table id="{{ boxrecord.name }}_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if box1s %}
+                            {% for box1 in box1s %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ box1.priority }}" id="_{{ box1.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ box1.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ box1.assigned_by.email }}?subject=taskbox:&nbsp;{{ box1.job_number }}-{{ box1.cell_number }}&nbsp;&nbsp;{{ box1.job_name }}">{{ box1.assigned_by }}</a></td>
+                            <td>{{ box1.job_number }}</td>
+                            <td>{{ box1.cell_number }}</td>
+                            <td>{{ box1.job_name }}</td>
+                            <td>{{ box1.request }}</td>
+                            <td><div class="note"><a class="trigger" href="#">{{ box1.note }}</a></div></td>
+                            <td>{{ box1.date_due }}</td>
+                            <td><a href="mailto:{{ box1.accepted_by.email }}?subject=taskbox:&nbsp;{{ box1.job_number }}-{{ box1.cell_number }}&nbsp;&nbsp;{{ box1.job_name }}">{{ box1.accepted_by }}</a></td>
+                            <td class="status_cell">{{ box1.status }}</td>
+                            <td> </td>
+                            <td>{{ box1.completed_on }}</td>
+            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+                                    {% endfor %}
+              
+              
+             {% for boxrecord in boxrecords|slice:"1:2" %}
+              <div id="tlist_{{ boxrecord.id }}" class="tlist">
+                    <h4>{{ boxrecord.name }}</h4>
+                    <table id="{{ boxrecord.name }}_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if box2s %}
+                        {% for box2 in box2s %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ box2.priority }}" id="_{{ box2.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ box2.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ box2.assigned_by.email }}?subject=taskbox:&nbsp;{{ box2.job_number }}-{{ box2.cell_number }}&nbsp;&nbsp;{{ box2.job_name }}">{{ box2.assigned_by }}</a></td>
+                            <td>{{ box2.job_number }}</td>
+                            <td>{{ box2.cell_number }}</td>
+                            <td>{{ box2.job_name }}</td>
+                            <td>{{ box2.request }}</td>
+                            <td><div class="note"><a class="trigger" href="#">{{ box2.note }}</a></div></td>
+                            <td>{{ box2.date_due }}</td>
+                            <td><a href="mailto:{{ box2.accepted_by.email }}?subject=taskbox:&nbsp;{{ box2.job_number }}-{{ box2.cell_number }}&nbsp;&nbsp;{{ box2.job_name }}">{{ box2.accepted_by }}</a></td>
+                            <td class="status_cell">{{ box2.status }}</td>
+                            <td> </td>
+                            <td>{{ box2.completed_on }}</td>
+
+            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+                                    {% endfor %}
+
+
+                {% for boxrecord in boxrecords|slice:"2:3" %}
+              <div id="tlist_{{ boxrecord.id }}" class="tlist">
+                    <h4>{{ boxrecord.name }}</h4>
+                    <table id="{{ boxrecord.name }}_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if box3s %}
+                        {% for box3 in box3s %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ box3.priority }}" id="_{{ box3.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ box3.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ box3.assigned_by.email }}?subject=taskbox:&nbsp;{{ box3.job_number }}-{{ box3.cell_number }}&nbsp;&nbsp;{{ box3.job_name }}">{{ box3.assigned_by }}</a></td>
+                            <td>{{ box3.job_number }}</td>
+                            <td>{{ box3.cell_number }}</td>
+                            <td>{{ box3.job_name }}</td>
+                            <td>{{ box3.request }}</td>
+                            <td><div class="note"><a class="trigger" href="#">{{ box3.note }}</a></div></td>
+                            <td>{{ box3.date_due }}</td>
+                            <td><a href="mailto:{{ box3.accepted_by.email }}?subject=taskbox:&nbsp;{{ box3.job_number }}-{{ box3.cell_number }}&nbsp;&nbsp;{{ box3.job_name }}">{{ box3.accepted_by }}</a></td>
+                            <td class="status_cell">{{ box3.status }}</td>
+                            <td> </td>
+                            <td>{{ box3.completed_on }}</td>
+
+                                {% endfor %}
+                                {% else %}
+                                {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+                                    {% endfor %}
+
+                {% for boxrecord in boxrecords|slice:"3:4" %}
+              <div id="tlist_{{ boxrecord.id }}" class="tlist">
+                    <h4>{{ boxrecord.name }}</h4>
+                    <table id="{{ boxrecord.name }}_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if box4s %}
+                            {% for box4 in box4s %}
+                            <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ box4.priority }}" id="_{{ box4.id }}">
+                                <td><a href="../../../taskmanager/edit/{{ box4.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                                <td><a href="mailto:{{ box4.assigned_by.email }}?subject=taskbox:&nbsp;{{ box4.job_number }}-{{ box4.cell_number }}&nbsp;&nbsp;{{ box4.job_name }}">{{ box4.assigned_by }}</a></td>
+                                <td>{{ box4.job_number }}</td>
+                                <td>{{ box4.cell_number }}</td>
+                                <td>{{ box4.job_name }}</td>
+                                <td>{{ box4.request }}</td>
+                                <td><div class="note"><a class="trigger" href="#">{{ box4.note }}</a></div></td>
+                                <td>{{ box4.date_due }}</td>
+                                <td><a href="mailto:{{ box4.accepted_by.email }}?subject=taskbox:&nbsp;{{ box4.job_number }}-{{ box4.cell_number }}&nbsp;&nbsp;{{ box4.job_name }}">{{ box4.accepted_by }}</a></td>
+                                <td class="status_cell">{{ box4.status }}</td>
+                                <td> </td>
+                                <td>{{ box4.completed_on }}</td>
+
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+                                    {% endfor %}
+
+                {% for boxrecord in boxrecords|slice:"4:5" %}
+              <div id="tlist_{{ boxrecord.id }}" class="tlist">
+                    <h4>{{ boxrecord.name }}</h4>
+                    <table id="{{ boxrecord.name }}_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>due</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if box5s %}
+                            {% for box5 in box5s %}
+                            <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %} {{ box5.priority }}" id="_{{ box5.id }}">
+                                <td><a href="../../../taskmanager/edit/{{ box5.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                                <td><a href="mailto:{{ box5.assigned_by.email }}?subject=taskbox:&nbsp;{{ box5.job_number }}-{{ box5.cell_number }}&nbsp;&nbsp;{{ box5.job_name }}">{{ box5.assigned_by }}</a></td>
+                                <td>{{ box5.job_number }}</td>
+                                <td>{{ box5.cell_number }}</td>
+                                <td>{{ box5.job_name }}</td>
+                                <td>{{ box5.request }}</td>
+                                <td><div class="note"><a class="trigger" href="#">{{ box5.note }}</a></div></td>
+                                <td>{{ box5.date_due }}</td>
+                                <td><a href="mailto:{{ box5.accepted_by.email }}?subject=taskbox:&nbsp;{{ box5.job_number }}-{{ box5.cell_number }}&nbsp;&nbsp;{{ box5.job_name }}">{{ box5.accepted_by }}</a></td>
+                                <td class="status_cell">{{ box5.status }}</td>
+                                <td> </td>
+                                <td>{{ box5.completed_on }}</td>
+
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+                                    {% endfor %}
+                        {% else %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+              
+              </div>
+ 
+            </div>
+ 
+          </div>
+        
+        <div>
+            
+        </div> 
+    
+              
+            
+                <script type="text/javascript">
+                $(function(){
+                    var projectArray = document.getElementsByClassName('status_cell');
+                    for (i=0; i< projectArray.length; i++){
+                        if (projectArray[i].innerHTML === "In Progress"){
+                            projectArray[i].parentNode.style.backgroundColor = "#54fe47";
+                        // }else if (projectArray[i].innerHTML === "Awaiting Action"){
+                        //     projectArray[i].style.backgroundColor = "#ffffff";
+                        // }else if (projectArray[i].innerHTML === "Posted" ||  projectArray[i].innerHTML === "Basecamp"){
+                        //     projectArray[i].parentNode.style.backgroundColor = "#fec447";
+                        }else if (projectArray[i].innerHTML === "Completed"){
+                            projectArray[i].parentNode.style.backgroundColor = "#cccccc";
+                        }else if (projectArray[i].innerHTML === "Released"){
+                            projectArray[i].parentNode.style.backgroundColor = "#333";
+                            projectArray[i].parentNode.style.color = "#fff";
+                        }
+                    }
+                })
+
+                function validateForm(){
+                    var assignedby = $('select#id_assigned_by').val();
+                    var jobnumber = $('input#id_job_number').val();
+                    var jobname = $('input#id_job_name').val();
+                    var duedate = $('input#id_due_date').val();
+                    var inbox = $('iselect#id_box').val();
+                    if (assignedby.length > 0 || jobnumber.length > 0 || jobname.length > 0 || duedate.length > 0 || inbox.length > 0 ) {
+                        
+                    }else {
+                        alert ("Please provide all required information");
+                        return false;
+                    }
+                    end.focus();
+                }
+                $(document).ready(function() {
+                    $(".note a.[title]").tooltip({ position: "center right", offset: [-10, 10],});
+                });
+
+                function postMessage(theUrl){
+                    var xmlHttp = null;
+
+                    xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", theUrl, false );
+                    xmlHttp.send( null );
+                    return xmlHttp.responseText;
+                }
+                $(document).ready(function() {
+                    $(".note a.[title]").tooltip({ position: "center right", offset: [-10, 10],});
+                });
+                
+                $(document).ready(function() {
+                    $( "#list_in" ).click(function() {
+                        console.log('clicked');
+                        $('.tlist').css('display', 'none');
+                        $('#personal_tlist').fadeIn(1000, function() { });
+                    });
+                    $( "#list_out" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#assigned_tlist').fadeIn(1000, function() { });
+                    }); 
+                    $( "#list_box_1" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#tlist_1').fadeIn(1000, function() { });
+                    });
+                    $( "#list_box_2" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#tlist_2').fadeIn(1000, function() { });
+                    });
+                    $( "#list_box_3" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#tlist_3').fadeIn(1000, function() { });
+                    });
+                    $( "#list_box_4" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#tlist_4').fadeIn(1000, function() { });
+                    });
+                    $( "#list_box_5" ).click(function() {
+                        $('.tlist').css('display', 'none');
+                        $('#tlist_5').fadeIn(1000, function() { });
+                    });               
+                 });
+                </script>
+                    
+                    
+            </div>  
+                
+ 
+        </div>
+         
+    </div>
+        {% endblock %}
+
+

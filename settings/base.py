@@ -29,6 +29,8 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 
 
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
@@ -42,7 +44,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -50,19 +52,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'admin_tools.theming',
-    'admin_tools.menu',
-    'admin_tools.dashboard',
+    'grappelli',
+    'filebrowser',
+    'django.contrib.contenttypes',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'filebrowser',
-    'django.contrib.contenttypes',
     'crispy_forms',
     'assetpost',
+    'taskmanager',
+    'bootstrap3_datetime',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -75,6 +77,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+
+
 
 ROOT_URLCONF = 'dapprj.urls'
 
@@ -91,6 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.core.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
+                'assetpost.context_processors.extra_context',
             ],
         },
     },
@@ -133,19 +138,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = "/home/krcnyc/Projects/dap/"
+
 STATICFILES_DIRS = (
-os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 )
 
 TEMPLATE_DIRS = (
-os.path.join(BASE_DIR, "templates"),
+    os.path.join(BASE_DIR, "templates"),
 )
 
 MEDIA_URL = '/static/media/'
 
-MEDIA_ROOT = (
-    os.path.join(BASE_DIR, "static/media/")
-)
+MEDIA_ROOT = "/home/krcnyc/Projects/dap/static/media/"
 
 LOGIN_REDIRECT_URL = ('/main/')
 

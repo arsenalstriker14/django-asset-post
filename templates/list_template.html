@@ -1,130 +1,158 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% crispy postsearch_form postsearch_form.helper %}
 
 {% csrf_token %}
 
 
 
 
-		
-		<!-- <link href="../../../../site_media/css/bootstrap.min.css" rel="stylesheet" />
-		<link href="../../../../site_media/css/posting.css" rel="stylesheet" />  -->
-
+		{% block head_content %}
+        <script src="{% static 'js/bootstrap-table.js' %}"></script>
+        <script>
+        function dateSorter(a, b) {
+            a = Date.parse(a).getTime()/1000;
+            b= Date.parse(b).getTime()/1000;
+            return (a-b);
+        }
+        </script>
+        <style>
+        .fixed-table-container {
+            border: 0 solid #dddddd;
+            font-size: .9em;
+        }
+        .fixed-table-container tbody td {
+            border: 0 solid #dddddd;
+        }
+        #page_table{font-size: .9em;border: 0 solid #dddddd;}
+        .bootstrap-table .table, .bootstrap-table .table > tbody > tr > th, .bootstrap-table .table > tfoot > tr > th, .bootstrap-table .table > thead > tr > td, .bootstrap-table .table > tbody > tr > td, .bootstrap-table .table > tfoot > tr > td {
+            padding: 0px 2px !important; border: 0 solid #dddddd;
+        }
+        .fixed-table-container thead th .th-inner {
+            line-height: 1;
+        }
+        .fixed-table-container thead th {
+            border-left: 0 solid #dddddd;
+        }
+        .fixed-table-container thead th {
+            border-left: 0px solid #dddddd;
+        }
+        .bootstrap-table .table > thead > tr > th {
+            border-bottom: 0px solid #ddd;
+        }
+        </style>
+        <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.min.js"></script>
+    <![endif]-->
+		{% endblock %}
 
 
 {% block content %}
-	<iframe id="inbox_frame" src="../../production-display/{{ user.userprofile.id }}/" width="100%" height="100%"></iframe>
-	<div class="container">
-		<script type="text/javascript">
-		function resetForm(){
-			window.location = "/main/";
-		}
-		</script>
+	<iframe id="inbox_frame" src="" width="100%" height="100%"></iframe>
+	<div id="list_controls" class="container stage">
 		<div class="row">
-			<table style="margin-left:0;">
-				<tr>
-					<td valign="top" style="padding-right:0;">
-						<h6>Enter client or project id here:</h6>
-					</td> 
-					<td align="left">
-				 		<form id="RecordSearchForm" method="get" action="." style="width:400px;margin:0;"> {% csrf_token %}
-							<table style="margin-left:0;">
-								<tr>
-									<td>{{ form.as_p }}</td>
-									<td><div class="inputbox_sm"><input class="inputbox_sm" type="submit" name="search" value="search" style="margin-bottom:15px;"/></div></td>
-									<td><div class="inputbox_sm"><input class="inputbox_sm"  type="button" value="clear form" style="margin-bottom:15px;" onclick="resetForm();"/></div></td>
-								</tr> 
-							 </table>
-						  </form>
-			  		 </td>
-				</tr>
-			</table>
+			<div class="col-md-12">
+				<div class="well">
+					
+                    {% crispy form %}
+
+				</div>
+			</div>
 		</div>
 		<div class="row">
-			<div id="headerbox">
-				{% if records or precords or orders %}
-	            <div class="contact_information sanserif12pxbd" style="color:#555;margin-bottom:15px;">query returned the following results:</div>
+				{% if records or cellrecords %}
+	   		<div class="col-md-5">
+	   			<div class="well">
+                    <table  
+                            data-toggle="table"  
+                            data-query-params="queryParams"
+                            data-pagination="true"
+                            data-search="true">
+                        <thead>
+                            <tr>
+                                <th data-field="client"  data-sortable="true">client</th>
+                                <th data-field="id"  data-sortable="true">id</th>
+                                <th data-field="name"  data-sortable="true">name</th>
+                                <th data-field="created" data-sorter="dateSorter">created</th>
+                                <th data-field="edit"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr>
+                                <td>{{ record.client }}</td>
+                                <td>{{ record.job_number }}</td>
+                                <td><a href="{% url 'display_record' record.job_number %}" target="_blank">{{ record.job_name }}</a></td>
+                                <td>{{ record.create_date }}</td>
+                                <td><a href="{% url 'assetpost:update_page' record.id %}"><input type="button" value="edit" class="list_tb_btn" /></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>  
+		 		</div>
+		 	</div>
+			<div class="col-md-7">
+	   			<div class="well">
+					<table  
+                            data-toggle="table"  
+                            data-query-params="queryParams"
+                            data-pagination="true"
+                            data-search="true">
+                        <thead>
+                            <tr>
+                                <th data-field="client"  data-sortable="true">client</th>
+                                <th data-field="id"  data-sortable="true">id</th>
+                                <th data-field="cell"  data-sortable="true">cell</th>
+                                <th data-field="name"  data-sortable="true">name</th>
+                                <th data-field="type" data-sortable="true">type</th>
+                                <th data-field="round" data-sortable="true">round</th>
+                                <th data-field="created" data-sorter="dateSorter">created</th>
+                                <th data-field="edit"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cellrecord in cellrecords %}
+                            <tr>
+                                <td>{{ cellrecord.client }}</td>
+                                <td>{{ cellrecord.job_number }}</td>
+                                <td>{{ cellrecord.cell_number }}</td>
+                                <td><a href="{% url 'display_record' cellrecord.job_number %}" target="_blank">{{ cellrecord.post_title }}</a></td>
+                                <td>{{ cellrecord.post_type }}</td>
+                                <td>{{ cellrecord.post_round }}</td>
+                                <td>{{ cellrecord.date }}</td>
+                                <td><a href="{% url 'assetpost:updateEntry' cellrecord.id %}"><input type="button" value="edit" class="list_tb_btn" /></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
 
-				<div class="contact_box">
-					
-					<table id="list_table" class="tablesorter-bootstrap">
-					  <thead>
-						<tr>
-							<th>client</th>
-							<th>project id</th>
-							<th>project name</th>
-							<th>page type</th>
-							<th>create date</th>
-						</tr>
-					  </thead>
-					  <tbody>
-							
-							{% for record in records %}
-						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-							<td>{{ record.client }}</td>
-							<td>{{ record.job_number }}</td>
-							<td><a href="/../specdisplay/{{ record.job_number }}/" target="_blank">{{ record.job_name }}</a><a href="/../portdisplay/{{ record.job_number  }}/" target="_blank">{{ record.project_name }}</a><a href="/../releaseddisplay/{{ record.portal_code }}/" target="_blank">{{ record.releasedproject_name }}</a><a href="/../bannerdisplay/{{ record.client }}/{{ record.id }}" target="_blank">{{ record.page_name }}</a></td>
-							<td>{{ record.page_type }}</td>
-							<td>{{ record.create_date }}</td>
-						</tr>
-							{% endfor %}
-						
-							{% for precord in precords %}
-						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-							<td>{{ precord.client }}</td>
-							<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_number }}</a></td>
-							<td><a href="/../specdisplay/{{ precord.job_number }}/" target="_blank">{{ precord.job_name }}</a></td>
-							<td>{{ precord.page_type }}</td>
-							<td>{{ precord.create_date }}</td>
-						</tr>
-							{% endfor %}
-							
-							
-							{% for order in orders %}
-						<tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
-							<td>{{ order.client }}</td>
-							<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_number }}</a></td>
-							<td><a href="/../specdisplay/{{ order.job_number }}/" target="_blank">{{ order.job_name }}</a></td>
-							<td>{{ order.page_type }}</td>
-							<td>{{ order.create_date }}</td>
-						</tr>
-							{% endfor %}
-							
-						</tbody>
-					</table>
-					<script type="text/javascript">
-					function addScroll(postnumber){
-						if (postnumber == 30 || postnumber == 40){
-							document.getElementById('html').style.overflow = "visible";
-						}else{
-							document.getElementById('html').style.overflow = "hidden";
-						}
-					}
-					</script>
-					<div id="pager" class="pager">
-					  <form>
-					    <img src="/site_media/images/pager_icons/first.png" class="first"/>
-					    <img src="/site_media/images/pager_icons/prev.png" class="prev"/>
-					    <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-					    <img src="/site_media/images/pager_icons/next.png" class="next"/>
-					    <img src="/site_media/images/pager_icons/last.png" class="last"/>
-					    <select class="pagesize" onChange="addScroll(this.value);">
-					      <option selected="selected" value="10">10</option>
-					      <option value="20">20</option>
-					      <option value="30">30</option>
-					      <option value="40">40</option>
-					    </select>
-					  </form>
-					</div>
-					<script type="text/javascript" src="/site_media/js/posting.js"></script>
-				</div>  
-					
-	 
-			</div>
+                    <script>
+                    var $table = $('#table');
+
+                    $(function () {
+                    });
+                    function queryParams() {
+                        return {
+                            type: 'owner',
+                            sort: 'updated',
+                            direction: 'desc',
+                            per_page: 100,
+                            page: 1
+                        };
+                    }
+                    </script>
+                        
+
+                </div>
+            </div>
 		{% else %}
 		{% endif %}
 			
 		</div>	
 			  
-    	
     </div>
 {% endblock %}

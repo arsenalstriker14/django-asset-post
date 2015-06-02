@@ -1,5 +1,11 @@
 {% extends "base_nonav.html" %}
+{% load staticfiles %}
 {% csrf_token %}
+
+{% block head_content %}
+<link rel="stylesheet" href="{% static 'css/display_template.css' %}">
+<script src="{% static 'js/display_template.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 {% if precords %}
@@ -40,80 +46,70 @@
     <div class="row">
             <div class="col-sm-4">
                 <div class="well">
-                    <div id="ce_div" class="column_hdr bighdr16px grey" style="margin-top:15px;">Creative Execution</div>
+                    <div id="ce_div" class="column_hdr">Creative Execution</div>
                         {% if cerecords %}
                         {% for cerecord in cerecords %}
-                            <div class="entry_box_wrapper {{ cerecord.visibility }}">
+                            <div class="entry_box_wrapper">
                                 <div id="ce_round{{ cerecord.post_round }}" title="{{ cerecord.date }}" class="entry_header sanserif12pxbd 
                                 {{ cerecord.post_type }}{{ cerecord.post_round }}" style="line-height:2;"><hr />Creative Execution Round&nbsp;{{ cerecord.post_round }} &#151; {{ cerecord.date|date:"F d, Y" }}
                                 </div>
-                                <div class="entry_title sanserif12px">{% if cerecord.docfile = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
-                                    {{ cerecord.post_title }}{% elif cerecord.docfile = "" %}<a href="{{ cerecord.url_link }}" 
-                                    target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.docfile }}" 
+                                <div class="entry_title sanserif12px">{% if cerecord.preview_file = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
+                                    {{ cerecord.post_title }}{% elif cerecord.preview_file = "" %}<a href="{{ cerecord.url_link }}" 
+                                    target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.preview_file }}" 
                                     target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% endif %}
                                 </div>
                                 
                                 <div class="entry_link_bar" style="margin-bottom:5px;">
-                                    <div class="en_misc sanserif12px {{ cerecord.add_misc }}"><a href="/media/{{ cerecord.link_misc }}" target="_blank" class="showlink">{{ cerecord.misc_link }}</a></div>
-                                    <div class="en_misc2 sanserif12px {{ cedrecord.add_misc2 }}"><a href="/media/{{ cerecord.link_misc2 }}" target="_blank" class="showlink">{{ cerecord.misc_link2 }}</a></div>
-                                    <div class="en_html sanserif12px {{ cerecord.add_html }}"><a href="/media/{{ cerecord.link_html }}" target="_blank" class="showlink">html</a></div>
-                                    <div class="en_mobile sanserif12px {{ cerecord.add_mobile_view }}"><a href="{{ cerecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
-                                    <div class="en_pdf sanserif12px {{ cerecord.add_pdf }}"><a href="/media/{{ cerecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
-                                    <div class="en_report sanserif12px {{ cerecord.add_report }}"><a href="/media/{{ cerecord.link_report }}" target="_blank" class="showlink">links</a></div>
-                                    <div class="en_text sanserif12px {{ cerecord.add_text }}"><a href="/media/{{ cerecord.link_text }}" target="_blank" class="showlink">text</a></div>
-                                    <div class="en_zip sanserif12px {{ cerecord.add_zip }}"><a href="/media/{{ cerecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+                                    <div class="en_html sanserif12px {{ cerecord.add_html }}"><a href="/static/media/{{ cerecord.link_html }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/html-icon-150x150.jpg' %}" /></a></div>
+                                    <div class="en_pdf sanserif12px {{ cerecord.add_pdf }}"><a href="/static/media/{{ cerecord.link_pdf }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
+                                    <div class="en_report sanserif12px {{ cerecord.add_report }}"><a href="/static/media/{{ cerecord.link_report }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_txt_32x32.png' %}" /></a></div>
+                                    <div class="en_text sanserif12px {{ cerecord.add_text }}"><a href="/static/media/{{ cerecord.link_text }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_txt_32x32.png' %}" /></a></div>
+                                    <div class="en_zip sanserif12px {{ cerecord.add_zip }}"><a href="/static/media/{{ cerecord.link_zip }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_zip_32x32.png' %}" /></a></div>
                                     
                                 </div>
                             </div>
-                        
                         {% endfor %}{% else %}{% endif %}
 
-                        <div id="cd_div" class="column_hdr bighdr16px grey" style="margin-top:15px;margin-bottom:0;">Concept Development</div>
+                        <div id="cd_div" class="column_hdr">Concept Development</div>
                         {% if cdrecords %}
                         {% for cdrecord in cdrecords %}
-                            <div class="entry_box_wrapper {{ cdrecord.visibility }}">
+                            <div class="entry_box_wrapper">
                                 <div id="cd_round{{ cdrecord.post_round }}" title="{{ cdrecord.date }}" class="entry_header sanserif12pxbd 
-                                {{ cdrecord.post_type }}{{ cdrecord.post_round }}" style="line-height:2;"><hr />Concept Development Round&nbsp;{{ cdrecord.post_round }} &#151; {{ cdrecord.date|date:"F d, Y" }}</div>
-                                <div class="entry_title sanserif12px">{% if cdrecord.docfile = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
-                                    {{ cdrecord.post_title }}{% elif cdrecord.docfile = "" %}<a href="{{ cdrecord.url_link }}" 
-                                    target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.docfile }}" 
+                                {{ cdrecord.post_type }}{{ cdrecord.post_round }}" style="line-height:2;"><hr />Concept Development Round&nbsp;{{ cdrecord.post_round }} &#151; {{ cdrecord.date|date:"F d, Y" }}
+                                </div>
+                                <div class="entry_title sanserif12px">{% if cdrecord.preview_file = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
+                                    {{ cdrecord.post_title }}{% elif cdrecord.preview_file = "" %}<a href="{{ cdrecord.url_link }}" 
+                                    target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.preview_file }}" 
                                     target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% endif %}
                                 </div>
-                                
                                 <div class="entry_link_bar" style="margin-bottom:5px;">
-                                    <div class="en_misc sanserif12px {{ cdrecord.add_misc }}"><a href="/media/{{ cdrecord.link_misc }}" target="_blank" class="showlink">{{ cdrecord.misc_link }}</a></div>
-                                    <div class="en_misc2 sanserif12px {{ cdrecord.add_misc2 }}"><a href="/media/{{ cdrecord.link_misc2 }}" target="_blank" class="showlink">{{ cdrecord.misc_link2 }}</a></div>
                                     <div class="en_html sanserif12px {{ cdrecord.add_html }}"><a href="/media/{{ cdrecord.link_html }}" target="_blank" class="showlink">html</a></div>
-                                    <div class="en_mobile sanserif12px {{ cdrecord.add_mobile_view }}"><a href="{{ cdrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
-                                    <div class="en_pdf sanserif12px {{ cdrecord.add_pdf }}"><a href="/media/{{ cdrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+                                    <div class="en_pdf sanserif12px {{ cdrecord.add_pdf }}"><a href="/media/{{ cdrecord.link_pdf }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
                                     <div class="en_report sanserif12px {{ cdrecord.add_report }}"><a href="/media/{{ cdrecord.link_report }}" target="_blank" class="showlink">links</a></div>
                                     <div class="en_text sanserif12px {{ cdrecord.add_text }}"><a href="/media/{{ cdrecord.link_text }}" target="_blank" class="showlink">text</a></div>
                                     <div class="en_zip sanserif12px {{ cdrecord.add_zip }}"><a href="/media/{{ cdrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
                                 </div>
                             </div>
                         {% endfor %}{% else %}{% endif %}
-                        
-                </div>    
+                 </div>       
             </div>
             <div class="col-sm-4">
                 <div class="well">
                     <div id="cm_div" class="column_hdr bighdr16px grey" style="margin-top:15px;">Coded Assets</div>
                         {% if cmrecords %}
                         {% for cmrecord in cmrecords %}
-                            <div class="entry_box_wrapper {{cmrecord.visibility }}">
+                            <div class="entry_box_wrapper">
                                 <div id="cm_round{{ cmrecord.post_round }}" title="{{ cmrecord.date }}" class="entry_header sanserif12pxbd 
-                                {{ cmrecord.post_type }}{{ cmrecord.post_round }}" style="line-height:2;"><hr />Coded Asset Round&nbsp;{{ cmrecord.post_round }} &#151; {{ cmrecord.date|date:"F d, Y" }}</div>
-                                <div class="entry_title sanserif12px">{% if cmrecord.docfile = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
-                                    {{ cmrecord.post_title }}{% elif cmrecord.docfile = "" %}<a href="{{ cmrecord.url_link }}" 
-                                    target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="/media/{{ cmrecord.docfile }}" 
+                                {{ cmrecord.post_type }}{{ cmrecord.post_round }}" style="line-height:2;"><hr />Coded Asset Round&nbsp;{{ cmrecord.post_round }} &#151; {{ cmrecord.date|date:"F d, Y" }}
+                                </div>
+                                <div class="entry_title sanserif12px">{% if cmrecord.preview_file = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
+                                    {{ cmrecord.post_title }}{% elif cmrecord.preview_file = "" %}<a href="{{ cmrecord.url_link }}" 
+                                    target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="/media/{{ cmrecord.preview_file }}" 
                                     target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% endif %}
                                 </div>
 
                                 <div class="entry_link_bar" style="margin-bottom:5px;">
-                                    <div class="en_misc sanserif12px {{ cmrecord.add_misc }}"><a href="/media/{{ cmrecord.link_misc }}" target="_blank" class="showlink">{{ cmrecord.misc_link }}</a></div>
-                                    <div class="en_misc2 sanserif12px {{ cmrecord.add_misc2 }}"><a href="/media/{{ cmrecord.link_misc2 }}" target="_blank" class="showlink">{{ cmrecord.misc_link2 }}</a></div>
-                                    <div class="en_html sanserif12px {{ cmrecord.add_html }}"><a href="/media/{{ cmrecord.link_html }}" target="_blank" class="showlink">html</a></div>
-                                    <div class="en_mobile sanserif12px {{ cmrecord.add_mobile_view }}"><a href="{{ cmrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
+                                    <div class="en_html sanserif12px {{ cmrecord.add_html }}"><a href="/media/{{ cmrecord.link_html }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
                                     <div class="en_pdf sanserif12px {{ cmrecord.add_pdf }}"><a href="/media/{{ cmrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
                                     <div class="en_report sanserif12px {{ cmrecord.add_report }}"><a href="/media/{{ cmrecord.link_report }}" target="_blank" class="showlink">links</a></div>
                                     <div class="en_text sanserif12px {{ cmrecord.add_text }}"><a href="/media/{{ cmrecord.link_text }}" target="_blank" class="showlink">text</a></div>
@@ -128,27 +124,24 @@
                         
                         {% if mrecords %}
                         {% for mrecord in mrecords %}
-                            <div class="entry_box_wrapper {{ mrecord.visibility }}">
+                            <div class="entry_box_wrapper">
                                 <div id="m_round{{ mrecord.post_round }}" title="{{ mrecord.date }}" class="entry_header sanserif12pxbd 
                                 {{ mrecord.post_type }}{{ mrecord.post_round }}" style="line-height:2;"><hr />Print Mechanical Round&nbsp;{{ mrecord.post_round }} &#151; {{ mrecord.date|date:"F d, Y" }}</div>
-                                <div class="entry_title sanserif12px">{% if mrecord.docfile = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
-                                    {{ mrecord.post_title }}{% elif mrecord.docfile = "" %}<a href="{{ mrecord.url_link }}" 
-                                    target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.docfile }}" 
+                                <div class="entry_title sanserif12px">{% if mrecord.preview_file = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
+                                    {{ mrecord.post_title }}{% elif mrecord.preview_file = "" %}<a href="{{ mrecord.url_link }}" 
+                                    target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.preview_file }}" 
                                     target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% endif %}
                                 </div>
                                 
                                 
                                 <div class="entry_link_bar" style="margin-bottom:5px;">
-                                    <div class="en_misc sanserif12px {{ mrecord.add_misc }}"><a href="/media/{{ mrecord.link_misc }}" target="_blank" class="showlink">{{ mrecord.misc_link }}</a></div>
-                                    <div class="en_misc2 sanserif12px {{ mrecord.add_misc2 }}"><a href="/media/{{ mrecord.link_misc2 }}" target="_blank" class="showlink">{{ mrecord.misc_link2 }}</a></div>
-                                    <div class="en_html sanserif12px {{ mrecord.add_html }}"><a href="/media/{{ mrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+                                    <div class="en_html sanserif12px {{ mrecord.add_html }}"><a href="/media/{{ mrecord.link_html }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
                                     <div class="en_pdf sanserif12px {{ mrecord.add_pdf }}"><a href="/media/{{ mrecord.link_pdf }}" target="_blank">pdf</a></div>
                                     <div class="en_report sanserif12px {{ mrecord.add_report }}"><a href="/media/{{ mrecord.link_report }}" target="_blank" class="showlink">links</a></div>
                                     <div class="en_text sanserif12px {{ mrecord.add_text }}"><a href="/media/{{ mrecord.link_text }}" target="_blank" class="showlink">text</a></div>
                                     <div class="en_zip sanserif12px {{ mrecord.add_zip }}"><a href="/media/{{ mrecord.link_zip }}" target="_blank">zip</a></div>
                             
-                                </div>
-                                
+                                </div>    
                             </div>
                         {% endfor %}{% else %}{% endif %}
 
@@ -161,29 +154,25 @@
                 {% for frrecord in frrecords %}
                     
                         
-                        <div class="entry_box_wrapper {{ frrecord.visibility }}">
+                    <div class="entry_box_wrapper">
                             <div id="{{ frrecord.post_type }}" title="{{ frrecord.date }}" class="entry_header sanserif12pxbd 
                             {{ frrecord.post_type }}" style="line-height:2;"><hr />{% if frrecord.is_rerelease = 1 %}<div style="margin-top:15px;"><span style="display:block;margin:0;line-height:.6;">ReRelease</span>{{ frrecord.date|date:"F d, Y" }}</div>{% else %}{{ frrecord.date|date:"F d, Y" }}{% endif %}
                             </div>
                             
-                            <div class="entry_title sanserif12px">{% if frrecord.docfile = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
-                                {{ frrecord.post_title }}{% elif frrecord.docfile = "" %}<a href="{{ frrecord.url_link }}" 
-                                target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.docfile }}" 
+                            <div class="entry_title sanserif12px">{% if frrecord.preview_file = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
+                                {{ frrecord.post_title }}{% elif frrecord.preview_file = "" %}<a href="{{ frrecord.url_link }}" 
+                                target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.preview_file }}" 
                                 target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% endif %}
                             </div>
 
                             <div class="entry_link_bar" style="margin-bottom:5px;">
-                                <div class="en_misc sanserif12px {{ frrecord.add_misc }}"><a href="/media/{{ frrecord.link_misc }}" target="_blank" class="showlink">{{ frrecord.misc_link }}</a></div>
-                                <div class="en_misc2 sanserif12px {{ frrecord.add_misc2 }}"><a href="/media/{{ frrecord.link_misc2 }}" target="_blank" class="showlink">{{ frrecord.misc_link2 }}</a></div>
                                 <div class="en_html sanserif12px {{ frrecord.add_html }}"><a href="/media/{{ frrecord.link_html }}" target="_blank" class="showlink">html</a></div>
-                                <div class="en_mobile sanserif12px {{ frrecord.add_mobile_view }}"><a href="{{ frrecord.mobile_view_url }}" target="_blank" class="showlink">mobile view</a></div>
-                                <div class="en_pdf sanserif12px {{ frrecord.add_pdf }}"><a href="/media/{{ frrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+                                <div class="en_pdf sanserif12px {{ frrecord.add_pdf }}"><a href="/media/{{ frrecord.link_pdf }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
                                 <div class="en_report sanserif12px {{ frrecord.add_report }}"><a href="/media/{{ frrecord.link_report }}" target="_blank" class="showlink">links</a></div>
                                 <div class="en_text sanserif12px {{ frrecord.add_text }}"><a href="/media/{{ frrecord.link_text }}" target="_blank" class="showlink">text</a></div>
                                 <div class="en_zip sanserif12px {{ frrecord.add_zip }}"><a href="/media/{{ frrecord.link_zip }}" target="_blank" class="showlink">zip</a>
                                 </div>
-                            </div>
-                        
+                            </div>    
                     </div>
                 {% endfor %}{% else %}{% endif %}
                     
@@ -193,25 +182,23 @@
     </div>
 </div>
 
-</div>
-
-<script type="text/javascript">
+<script>
     function displayLink(){
         var displaylinks = document.getElementsByClassName('showlink');
         for(var i=0; i < displaylinks.length; i++){
             var linklength = displaylinks[i].getAttribute('href').length;
             var linkvalue = displaylinks[i].getAttribute('href').toString();
             if ( linklength > 18 || linkvalue.indexOf('http') > -1 ){
-                displaylinks[i].parentNode.style.display = "inline";
+                displaylinks[i].parentNode.style.display = "inline-block";
                 displaylinks[i].parentNode.style.float = "left";
-                displaylinks[i].parentNode.style.borderRight = "1px solid #000";
                 displaylinks[i].parentNode.style.textAlign = "center";
-                displaylinks[i].parentNode.style.padding = "0 5px";
             }
 
         }
-        
+            
     }
+
+    displayLink();
 </script>
 
 

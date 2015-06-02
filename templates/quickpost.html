@@ -1,0 +1,265 @@
+{% extends 'base_nonav.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% csrf_token %}
+        
+        
+       <!-- <link rel="stylesheet" type="text/css" href="../../../../site_media/css/wrmscurrent.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../site_media/css/custom-theme/BUjquery-ui-1.8.1.custom.css" /> -->
+
+                {% block head_content %}
+        <link rel="stylesheet" href="{% static 'css/display_template.css' %}">
+        <script src="{% static 'js/display_template.js' %}"></script>
+        <style>
+        .row.no-gutter [class*='col-']:not(:first-child),.row.no-gutter [class*='col-']:not(:last-child) {
+         padding-right:2px;
+         padding-left:2px;
+        }
+        .control-label{
+            font-size: .9em;
+        }
+        .form-control{
+            height:26px;
+            font-size: .9em;
+            padding: 4px 10px;
+            line-height:1.2;
+        }
+        .group:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .hidden{display:none;}
+        body{
+            
+        }
+        </style>
+                {% endblock %}
+                
+        
+        
+        
+
+        {% block content %}
+
+        <div class="container">
+            <div class="row no-gutter">
+                <div class="col-md-3">
+                    <div class="well">
+                   
+                        <form name="PostEntryForm" action="../../quickpost/{{ precord.job_number }}/"  method="POST" enctype="multipart/form-data">
+                            {{ form|crispy }}
+                            {% csrf_token %}
+                            <input type="submit" value="Submit" />
+                        </form>
+                    
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="well">
+                    {% if precords %}
+                    {% for precord in precords %}
+
+                        <div id="identity_box" class="bighdr20pxblack">{{ precord.job_number }}<br />
+                        {{ precord.job_name }}</div>
+                        {% endfor %}
+                        {% else %}
+                        {% endif %}
+                        <div class="contact_information sanserif12pxbd">Contact Information</div>
+
+                        <div class="contact_box">
+                            {% if precords %}
+                            {% for precord in precords %}
+                            {% for contact in precord.contact.all %}
+
+                            {% for member in contact.member.all %}
+                            <div>
+                                <div class="contact_name sanserif12px">{{ member.position }}:&nbsp;{{ member.fullname }}</div>
+                                <div class="contact_phone sanserif12px">{{ member.phone }}</div>
+                                <div class="contact_email sanserif12px"><a href="mailto:{{ member.email }}">{{ member.email }}</a></div>
+                            </div>
+                      
+                            {% endfor %}
+                            {% endfor %}
+                            {% endfor %}
+                            {% else %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                        
+                <div class="col-sm-3">
+                    <div class="well">
+                        <div id="ce_div" class="column_hdr">Creative Execution</div>
+                        {% if cerecords %}
+                        {% for cerecord in cerecords %}
+                            <div class="entry_box_wrapper group">
+                                <div id="ce_round{{ cerecord.post_round }}" title="{{ cerecord.date }}" class="entry_header  
+                                {{ cerecord.post_type }}{{ cerecord.post_round }}" style="line-height:2;"><hr />Creative Execution Round&nbsp;{{ cerecord.post_round }} &#151; {{ cerecord.date|date:"F d, Y" }}
+                                </div>
+                                <div class="entry_title">{% if cerecord.preview_file = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
+                                    {{ cerecord.post_title }}{% elif cerecord.preview_file = "" %}<a href="{{ cerecord.url_link }}" 
+                                    target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.preview_file }}" 
+                                    target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% endif %}
+                                </div>
+                                
+                                <div class="entry_link_bar" style="margin-bottom:5px;">
+                                    <div class="en_html  {{ cerecord.add_html }}"><a href="/static/media/{{ cerecord.link_html }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/html-icon-150x150.jpg' %}" /></a>
+                                    </div>
+                                    <div class="en_pdf  {{ cerecord.add_pdf }}"><a href="/static/media/{{ cerecord.link_pdf }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a>
+                                    </div>
+                                    <div class="en_report  {{ cerecord.add_report }}"><a href="/static/media/{{ cerecord.link_report }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_txt_32x32.png' %}" /></a>
+                                    </div>
+                                    <div class="en_text  {{ cerecord.add_text }}"><a href="/static/media/{{ cerecord.link_text }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_txt_32x32.png' %}" /></a>
+                                    </div>
+                                    <div class="en_zip  {{ cerecord.add_zip }}"><a href="/static/media/{{ cerecord.link_zip }}" target="_blank" class="showlink"><img class="link_icon" src="{% static 'img/display_template/icon_zip_32x32.png' %}" /></a>
+                                    </div>   
+                                </div>
+                            </div>
+                        {% endfor %}{% else %}{% endif %}
+                        
+                        <div id="cd_div" class="column_hdr">Concept Development</div>
+                                {% if cdrecords %}
+                                {% for cdrecord in cdrecords %}
+                            <div class="entry_box_wrapper group">
+                                <div id="cd_round{{ cdrecord.post_round }}" title="{{ cdrecord.date }}" class="entry_header 
+                                {{ cdrecord.post_type }}{{ cdrecord.post_round }}" style="line-height:2;"><hr />Concept Development Round&nbsp;{{ cdrecord.post_round }} &#151; {{ cdrecord.date|date:"F d, Y" }}
+                                </div>
+                                <div class="entry_title">{% if cdrecord.preview_file = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
+                                    {{ cdrecord.post_title }}{% elif cdrecord.preview_file = "" %}<a href="{{ cdrecord.url_link }}" 
+                                    target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.preview_file }}" 
+                                    target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% endif %}
+                                </div>
+                                <div class="entry_link_bar" style="margin-bottom:5px;">
+                                    <div class="en_html  {{ cdrecord.add_html }}"><a href="/media/{{ cdrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+                                    <div class="en_pdf  {{ cdrecord.add_pdf }}"><a href="/media/{{ cdrecord.link_pdf }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
+                                    <div class="en_report  {{ cdrecord.add_report }}"><a href="/media/{{ cdrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+                                    <div class="en_text  {{ cdrecord.add_text }}"><a href="/media/{{ cdrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+                                    <div class="en_zip  {{ cdrecord.add_zip }}"><a href="/media/{{ cdrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+                                </div>
+                            </div>
+                        {% endfor %}{% else %}{% endif %}
+                          
+                    </div>
+                </div>     
+                           
+                        
+
+                <div class="col-sm-3">
+                    <div class="well">
+                        <div id="cm_div" class="column_hdr">Coded Assets</div>
+                            {% if cmrecords %}
+                            {% for cmrecord in cmrecords %}
+                            <div class="entry_box_wrapper">
+                                <div id="cm_round{{ cmrecord.post_round }}" title="{{ cmrecord.date }}" class="entry_header bd 
+                                {{ cmrecord.post_type }}{{ cmrecord.post_round }}" style="line-height:2;"><hr />Coded Asset Round&nbsp;{{ cmrecord.post_round }} &#151; {{ cmrecord.date|date:"F d, Y" }}
+                                </div>
+                                <div class="entry_title ">{% if cmrecord.preview_file = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
+                                    {{ cmrecord.post_title }}{% elif cmrecord.preview_file = "" %}<a href="{{ cmrecord.url_link }}" 
+                                    target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="{% static 'media/' %}{{ cmrecord.preview_file }}" 
+                                    target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% endif %}
+                                </div>
+
+                                <div class="entry_link_bar" style="margin-bottom:5px;">
+                                    <div class="en_html  {{ cmrecord.add_html }}"><a href="/media/{{ cmrecord.link_html }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
+                                    <div class="en_pdf  {{ cmrecord.add_pdf }}"><a href="/media/{{ cmrecord.link_pdf }}" target="_blank" class="showlink">pdf</a></div>
+                                    <div class="en_report  {{ cmrecord.add_report }}"><a href="/media/{{ cmrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+                                    <div class="en_text  {{ cmrecord.add_text }}"><a href="/media/{{ cmrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+                                    <div class="en_zip  {{ cmrecord.add_zip }}"><a href="/media/{{ cmrecord.link_zip }}" target="_blank" class="showlink">zip</a></div>
+                                    
+                                </div>
+                            </div>
+                            {% endfor %}{% else %}{% endif %}
+                       
+                        <div id="m_div" class="column_hdr">Print Mechanicals</div>
+                            
+                            {% if mrecords %}
+                            {% for mrecord in mrecords %}
+                            <div class="entry_box_wrapper">
+                                <div id="m_round{{ mrecord.post_round }}" title="{{ mrecord.date }}" class="entry_header bd 
+                                {{ mrecord.post_type }}{{ mrecord.post_round }}" style="line-height:2;"><hr />Print Mechanical Round&nbsp;{{ mrecord.post_round }} &#151; {{ mrecord.date|date:"F d, Y" }}</div>
+                                <div class="entry_title ">{% if mrecord.preview_file = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
+                                    {{ mrecord.post_title }}{% elif mrecord.preview_file = "" %}<a href="{{ mrecord.url_link }}" 
+                                    target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.preview_file }}" 
+                                    target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% endif %}
+                                </div>
+                                
+                                
+                                <div class="entry_link_bar" style="margin-bottom:5px;">
+                                    <div class="en_html  {{ mrecord.add_html }}"><a href="/media/{{ mrecord.link_html }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
+                                    <div class="en_pdf  {{ mrecord.add_pdf }}"><a href="/media/{{ mrecord.link_pdf }}" target="_blank">pdf</a></div>
+                                    <div class="en_report  {{ mrecord.add_report }}"><a href="/media/{{ mrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+                                    <div class="en_text  {{ mrecord.add_text }}"><a href="/media/{{ mrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+                                    <div class="en_zip  {{ mrecord.add_zip }}"><a href="/media/{{ mrecord.link_zip }}" target="_blank">zip</a></div>
+                            
+                                </div>    
+                            </div>
+                            {% endfor %}{% else %}{% endif %}
+                          
+                    </div>
+                </div>
+
+
+                <div class="col-sm-3">
+                    <div class="well">
+                        <div id="fr_div" class="column_hdr green">Final Release</div>
+                        {% if frrecords %}
+                        {% for frrecord in frrecords %}
+                        
+                            
+                            <div class="entry_box_wrapper">
+                                <div id="{{ frrecord.post_type }}" title="{{ frrecord.date }}" class="entry_header bd 
+                                {{ frrecord.post_type }}" style="line-height:2;"><hr />{% if frrecord.is_rerelease = 1 %}<div style="margin-top:15px;"><span style="display:block;margin:0;line-height:.6;">ReRelease</span>{{ frrecord.date|date:"F d, Y" }}</div>{% else %}{{ frrecord.date|date:"F d, Y" }}{% endif %}
+                                </div>
+                                
+                                <div class="entry_title ">{% if frrecord.preview_file = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
+                                    {{ frrecord.post_title }}{% elif frrecord.preview_file = "" %}<a href="{{ frrecord.url_link }}" 
+                                    target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.preview_file }}" 
+                                    target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% endif %}
+                                </div>
+
+                                <div class="entry_link_bar" style="margin-bottom:5px;">
+                                    <div class="en_html  {{ frrecord.add_html }}"><a href="/media/{{ frrecord.link_html }}" target="_blank" class="showlink">html</a></div>
+                                    <div class="en_pdf  {{ frrecord.add_pdf }}"><a href="/media/{{ frrecord.link_pdf }}" target="_blank" class="showlink"><img src="{% static 'img/display_template/icon_pdf_32x32.png' %}" /></a></div>
+                                    <div class="en_report  {{ frrecord.add_report }}"><a href="/media/{{ frrecord.link_report }}" target="_blank" class="showlink">links</a></div>
+                                    <div class="en_text  {{ frrecord.add_text }}"><a href="/media/{{ frrecord.link_text }}" target="_blank" class="showlink">text</a></div>
+                                    <div class="en_zip  {{ frrecord.add_zip }}"><a href="/media/{{ frrecord.link_zip }}" target="_blank" class="showlink">zip</a>
+                                    </div>
+                                </div>    
+                            </div>
+                        {% endfor %}{% else %}{% endif %}
+                        
+                        
+                    </div>
+                </div>
+                        
+                  
+            </div> <!-- close page row -->
+
+        </div> <!-- close page container -->
+        <script>
+        function displayLink(){
+            var displaylinks = document.getElementsByClassName('showlink');
+            for(var i=0; i < displaylinks.length; i++){
+                var linklength = displaylinks[i].getAttribute('href').length;
+                var linkvalue = displaylinks[i].getAttribute('href').toString();
+                if ( linklength > 18 || linkvalue.indexOf('http') > -1 ){
+                    displaylinks[i].parentNode.style.display = "inline-block";
+                    displaylinks[i].parentNode.style.float = "left";
+                    displaylinks[i].parentNode.style.textAlign = "center";
+                }
+
+            }
+                
+        }
+        displayLink();
+        function removePost(){
+            $('.hidden').remove();
+        }
+        removePost();
+        </script>
+
+{% endblock %}
+

@@ -1,0 +1,361 @@
+{% extends "base_nonav.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+        
+                    {% block head_content %}
+       
+        <link rel="stylesheet" href="{% static 'taskmanager/css/bootstrap-datetimepicker.css' %}" />
+        <link rel="stylesheet" href="{% static 'taskmanager/css/font-awesome.css' %}" />
+        <script src="{% static 'taskmanager/js/jquery.1.11.2.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/jquery.tools.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/moment.js' %}"></script>
+        <script src="{% static 'taskmanager/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'taskmanager/js/bootstrap-datepicker.min.js' %}"></script>
+        <style>
+        #taskbox_form{
+            font-size:70%;
+        }
+        .form-control {
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1;
+            height:80%;
+            margin-bottom: 7px;
+        }
+        .placeholder{position: relative;display: inline-block;height:53px;}
+         input#inbox_submit_btn, input#inbox_delete_btn{display:inline;width:100px;left:20px;}
+        </style>
+                       {{ form.media }}
+                        {% endblock %}
+        
+    
+
+                {% block content %}
+    <iframe id="inbox_frame" src="" width="100%" height="100%"></iframe>
+    <div class="container stage">
+        <div class="row">
+            <div class="well">
+                <div>
+                    <form id="taskbox_form" action="." method="POST">{% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="col-md-2">
+                            {{ form.assigned_by|as_crispy_field:"bootstrap" }}
+                            {{ form.box|as_crispy_field:"bootstrap" }}
+                            <table style="position:relative;display:block;">
+                                <tr>
+                                    <td><input id="inbox_submit_btn" onclick="validateForm();" type="submit" value="add" /></td>
+                                    <td><input id="inbox_delete_btn" name="delete" type="submit" value="delete" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                         <div class="col-md-2">
+                            {{ form.assigned_to|as_crispy_field:"bootstrap" }}                            
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.job_number|as_crispy_field:"bootstrap" }}
+                            {{ form.cell_number|as_crispy_field:"bootstrap" }}
+                            {{ form.job_name|as_crispy_field:"bootstrap" }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.request|as_crispy_field:"bootstrap" }}
+                            {{ form.date_due|as_crispy_field:"bootstrap"  }}
+                            {{ form.basecamp_link|as_crispy_field:"bootstrap" }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.accepted_by|as_crispy_field:"bootstrap" }}
+                            {{ form.status|as_crispy_field:"bootstrap" }}
+                            {{ form.completed_on|as_crispy_field:"bootstrap" }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.note|as_crispy_field:"bootstrap" }}  
+                        </div>       
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">
+                <div class="well">
+                    <div class="col-md-12">
+                        <ul id="tbox_menu">
+                            <li id="list_in">{{ user.first_name }}'s Tasklist - In</li>
+                            <li id="list_out">{{ user.first_name }}'s Tasklist - Out</li>
+                            <li id="list_studio">WRMS Studio Tasklist</li>
+                            <li id="list_creative">WRMS Creative Tasklist</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+    
+              <!-- the items -->
+              <div id="personal_tlist" class="tlist">
+                    
+                    <h4>{{ user.first_name }}'s Tasklist</h4>
+                    <table id="personal_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell no</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>date in</th>
+                            <th>basecamp link</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if boxrecords %}
+                            {% for boxrecord in records %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ record.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ record.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ record.assigned_by.email }}?subject=taskbox:&nbsp;{{ record.job_number }}-{{ record.cell_number }}&nbsp;&nbsp;{{ record.job_name }}">{{ record.assigned_by }}</a></td>
+                            <td>{{ record.job_number }}</td>
+                            <td>{{ record.cell_number }}</td>
+                            <td>{{ record.job_name }}</td>
+                            <td>{{ record.request }}</td>
+                            <td><div class="note"><a title="{{ record.note }}" href="#">{{ record.note }}</a></div></td>
+                            <td>{{ record.date_due }}</td>
+                            <td><div class="basecamp"><a href="{{ record.basecamp_link }}/" target="_blank">{{ record.basecamp_link }}</a></div></td>
+                            <td><a href="mailto:{{ record.accepted_by.email }}?subject=taskbox:&nbsp;{{ record.job_number }}-{{ record.cell_number }}&nbsp;&nbsp;{{ record.job_name }}">{{ record.accepted_by }}</a></td>
+                            <td class="status_cell">{{ record.status }}</td>
+                            <td> </td>
+                            <td>{{ record.completed_on }}</td>
+                            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+                        </tr>
+                        
+                        
+                      </tbody>
+                    </table>
+              </div>
+              
+              <div id="assigned_tlist" class="tlist">
+                    
+                    <h4>{{ user.first_name }}'s Assigned Tasks</h4>
+                    <table id="assigned_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell no</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>date in</th>
+                            <th>basecamp link</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                                {% if assignedrecords %}
+                                {% for assignedrecord in assignedrecords %}
+                            <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ assignedrecord.id }}">
+                                <td><a href="../../../taskmanager/edit/{{ assignedrecord.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                                <td><a href="mailto:{{ assignedrecord.assigned_by.email }}?subject=taskbox:&nbsp;{{ assignedrecord.job_number }}-{{ assignedrecord.cell_number }}&nbsp;&nbsp;{{ assignedrecord.job_name }}">{{ assignedrecord.assigned_by }}</a></td>
+                                <td>{{ assignedrecord.job_number }}</td>
+                                <td>{{ assignedrecord.cell_number }}</td>
+                                <td>{{ assignedrecord.job_name }}</td>
+                                <td>{{ assignedrecord.request }}</td>
+                                <td><div class="note"><a title="{{ assignedrecord.note }}" href="#">{{ assignedrecord.note }}</a></div></td>
+                                <td>{{ assignedrecord.date_due }}</td>
+                                <td><div class="basecamp"><a href="{{ assignedrecord.basecamp_link }}/" target="_blank">{{ assignedrecord.basecamp_link }}</a></div></td>
+                                <td><a href="mailto:{{ assignedrecord.accepted_by.email }}?subject=taskbox:&nbsp;{{ assignedrecord.job_number }}-{{ assignedrecord.cell_number }}&nbsp;&nbsp;{{ assignedrecord.job_name }}">{{ assignedrecord.accepted_by }}</a></td>
+                                <td class="status_cell">{{ assignedrecord.status }}</td>
+                                <td> </td>
+                                <td>{{ assignedrecord.completed_on }}</td>
+                            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+                        </tr>
+                        
+                        
+                      </tbody>
+                    </table>
+              </div>
+              
+              
+              
+              <div id="studio_tlist" class="tlist">
+                    <h4>WRMS Studio Taskbox</h4>
+                    <table id="studio_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell no</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>date in</th>
+                            <th>basecamp link</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if studiorecords %}
+                            {% for studiorecord in studiorecords %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ studiorecord.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ studiorecord.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ studiorecord.assigned_by.email }}?subject=taskbox:&nbsp;{{ studiorecord.job_number }}-{{ studiorecord.cell_number }}&nbsp;&nbsp;{{ studiorecord.job_name }}">{{ studiorecord.assigned_by }}</a></td>
+                            <td>{{ studiorecord.job_number }}</td>
+                            <td>{{ studiorecord.cell_number }}</td>
+                            <td>{{ studiorecord.job_name }}</td>
+                            <td>{{ studiorecord.request }}</td>
+                            <td><div class="note"><a class="trigger" href="#">{{ studiorecord.note }}</a></div></td>
+                            <td>{{ studiorecord.date_due }}</td>
+                            <td><div class="basecamp"><a href="{{ studiorecord.basecamp_link }}/" target="_blank">{{ studiorecord.basecamp_link }}</a></div></td>
+                            <td><a href="mailto:{{ studiorecord.accepted_by.email }}?subject=taskbox:&nbsp;{{ studiorecord.job_number }}-{{ studiorecord.cell_number }}&nbsp;&nbsp;{{ studiorecord.job_name }}">{{ studiorecord.accepted_by }}</a></td>
+                            <td class="status_cell">{{ studiorecord.status }}</td>
+                            <td> </td>
+                            <td>{{ studiorecord.completed_on }}</td>
+            
+                                    {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                            </div>
+                        
+            
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+              </div>
+              
+              
+              
+              <div id="creative_tlist" class="tlist">
+                    <h4>WRMS Creative Taskbox</h4>
+                    <table id="creative_table" class="display_table">
+                      <thead>
+                        <tr>
+                            <th> </th>
+                            <th>from</th>
+                            <th>job number</th>
+                            <th>cell no</th>
+                            <th>job name</th>
+                            <th>request</th>
+                            <th>note</th>
+                            <th>date in</th>
+                            <th>basecamp link</th>
+                            <th>accepted_by</th>
+                            <th>status<th>
+                            <th>completed<th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% if creativerecords %}
+                            {% for creativerecord in creativerecords %}
+                        <tr class="list_row {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" id="_{{ creativerecord.id }}">
+                            <td><a href="../../../taskmanager/edit/{{ creativerecord.id }}/{{ user.userprofile.id }}"><input type="button" class="edit_btn" value="edit" /></a></td>
+                            <td><a href="mailto:{{ creativerecord.assigned_by.email }}?subject=taskbox:&nbsp;{{ creativerecord.job_number }}-{{ creativerecord.cell_number }}&nbsp;&nbsp;{{ creativerecord.job_name }}">{{ creativerecord.assigned_by }}</a></td>
+                            <td>{{ creativerecord.job_number }}</td>
+                            <td>{{ creativerecord.cell_number }}</td>
+                            <td>{{ creativerecord.job_name }}</td>
+                            <td>{{ creativerecord.request }}</td>
+                            <td><div class="note"><a class="trigger" href="#">{{ creativerecord.note }}</a></div></td>
+                            <td>{{ creativerecord.date_due }}</td>
+                            <td><div class="basecamp"><a href="{{ creativerecord.basecamp_link }}/" target="_blank">{{ creativerecord.basecamp_link }}</a></div></td>
+                            <td><a href="mailto:{{ creativerecord.accepted_by.email }}?subject=taskbox:&nbsp;{{ creativerecord.job_number }}-{{ creativerecord.cell_number }}&nbsp;&nbsp;{{ creativerecord.job_name }}">{{ creativerecord.accepted_by }}</a></td>
+                            <td class="status_cell">{{ creativerecord.status }}</td>
+                            <td> </td>
+                            <td>{{ creativerecord.completed_on }}</td>
+            
+                    
+            
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+              
+              </div>
+ 
+            </div>
+ 
+          </div>
+        
+        <div>
+            
+                <script type="text/javascript">
+                $(function(){
+                    var projectArray = document.getElementsByClassName('status_cell');
+                    for (i=0; i< projectArray.length; i++){
+                        if (projectArray[i].innerHTML === "In Progress"){
+                            projectArray[i].parentNode.style.backgroundColor = "#54fe47";
+                        }else if (projectArray[i].innerHTML === "Awaiting Action"){
+                            projectArray[i].style.backgroundColor = "#ffffff";
+                        }else if (projectArray[i].innerHTML === "Posted" ||  projectArray[i].innerHTML === "Basecamp"){
+                            projectArray[i].parentNode.style.backgroundColor = "#fec447";
+                        }else if (projectArray[i].innerHTML === "Completed"){
+                            projectArray[i].parentNode.style.backgroundColor = "#cccccc";
+                        }else if (projectArray[i].innerHTML === "Released"){
+                            projectArray[i].parentNode.style.backgroundColor = "#333";
+                            projectArray[i].parentNode.style.color = "#fff";
+                        }
+                    }
+                })
+
+                function validateForm(){
+                    var assignedby = $('select#id_assigned_by').val();
+                    var jobnumber = $('input#id_job_number').val();
+                    var jobname = $('input#id_job_name').val();
+                    var duedate = $('input#id_due_date').val();
+                    var inbox = $('iselect#id_box').val();
+                    if (assignedby.length > 0 || jobnumber.length > 0 || jobname.length > 0 || duedate.length > 0 || inbox.length > 0 ) {
+                        
+                    }else {
+                        alert ("Please provide all required information");
+                        return false;
+                    }
+                    end.focus();
+                }
+                $(document).ready(function() {
+                    $(".note a.[title]").tooltip({ position: "center right", offset: [-10, 10],});
+                });
+
+                function postMessage(theUrl){
+                    var xmlHttp = null;
+
+                    xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", theUrl, false );
+                    xmlHttp.send( null );
+                    return xmlHttp.responseText;
+                }
+                $(document).ready(function() {
+                    $(".note a.[title]").tooltip({ position: "center right", offset: [-10, 10],});
+                });
+                
+                </script>
+                    
+                    
+            </div>  
+                
+ 
+        </div>
+         
+    </div>
+        {% endblock %}
+
+

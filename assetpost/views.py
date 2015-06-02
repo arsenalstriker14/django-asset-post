@@ -3,7 +3,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User 
-from django.contrib.auth import logout
 from django.template import Context, RequestContext
 from django.template.loader import get_template
 from .models import * 
@@ -15,7 +14,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import get_model
 from django import forms
 from django.forms import ModelForm
-from django.contrib.auth.decorators import login_required
 from itertools import chain
 from django.db.models import Q
 from itertools import chain, islice
@@ -23,9 +21,12 @@ import operator
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from datetime import datetime
-from django.forms.models import modelformset_factory
-from django.forms.models import *
+from django.forms.models import modelformset_factory, BaseModelFormSet
+from django.forms.formsets import formset_factory
 from django.template.response import TemplateResponse
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView, View
+from braces.views import LoginRequiredMixin
+from django.core.urlresolvers import reverse_lazy, reverse
 
 # Create your views here.
 def login_user(request):
@@ -42,13 +43,225 @@ def login_user(request):
                 return HttpResponseRedirect('/main/')
     return render_to_response('registration/login.html', context_instance=RequestContext(request))
 
-@login_required(login_url='/login/') 
-def home(request):
-     return render(request, "index.html", {})
-
 def logout_page(request): 
         logout(request) 
         return HttpResponseRedirect('/')
+
+
+
+# class PostEntryCreate(CreateView):
+#     model = PostEntry
+#     fields = ['client', 'job_number', 'cell_number', 'post_title', 'date', 'post_type', 'post_round', 'preview_file', 'url_link', 'link_pdf', 'link_html', 'link_report', 'link_text', 'link_zip']
+#     success_url = "../assetpost/newpostentry/"
+
+# def createEntry(request):
+#     if request.method == 'POST':
+#         form = PostEntryForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             template = "assetpost/postentry_form.html"
+#             variables = RequestContext(request, {'form':form})
+#             return render_to_response(template, variables)
+#     else:
+#         form = PostEntryForm()
+#         template = "assetpost/postentry_form.html"
+#         variables = RequestContext(request, {'form':form})
+#         return render_to_response(template, variables)
+
+def createEntry(request):
+
+    if request.method == 'POST':
+        form = PostEntryForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            tpl = 'assetpost/postentry_form.html'
+            variables = RequestContext(request, {'form':form })
+            return HttpResponseRedirect('/assetpost/create-entry/')
+        
+        else:
+                form = PostEntryForm()
+                tpl = 'assetpost/postentry_form.html'
+                variables = RequestContext(request, {'form':form })
+                return render_to_response(tpl, variables)
+    else:
+        form = PostEntryForm()
+        tpl = 'assetpost/postentry_form.html'
+        variables = RequestContext(request, {'form':form })
+        return render_to_response(tpl, variables)
+
+
+def updateEntry(request, id):
+
+    if request.method == 'POST':
+        form = PostEntryForm(request.POST, request.FILES, instance = PostEntry.objects.get(pk = id))
+        if request.POST.get('delete'):
+            instance = PostEntry.objects.get(pk=id)
+            instance.delete()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        
+    else:
+        form = PostEntryForm(instance = PostEntry.objects.get(pk = id))
+        tpl = 'assetpost/postupdate_form.html'
+        variables = RequestContext(request, {'form':form })
+        return render_to_response(tpl, variables)
+
+
+
+
+class BasePostEntryFormSet(BaseModelFormSet):
+    def __init__(self, *args, **kwargs):
+        super(BasePostEntryFormSet, self).__init__(*args, **kwargs)
+        self.queryset = PostEntry.objects.none() 
+
+def multipost(request):
+    PostEntryFormset = modelformset_factory(PostEntry, fields='__all__', extra=6, formset=BasePostEntryFormSet)
+    if request.method == 'POST':
+        formset = PostEntryFormset(request.POST, request.FILES)
+
+        if(formset.is_valid()):
+            formset.save()
+            return HttpResponseRedirect('/assetpost/multipost/')
+
+    else:
+        formset = PostEntryFormset()
+        clients = ClientList.objects.all()
+        variables = RequestContext(request, {'clients' : clients, 'formset':formset })
+        return render_to_response("assetpost/multipost_form.html", variables)
+
+def multipost_init(request, client, id):
+    PostEntryFormset = modelformset_factory(PostEntry, fields='__all__', extra=6, formset=BasePostEntryFormSet)
+    if request.method == 'POST':
+        formset = PostEntryFormset(request.POST, request.FILES)
+        
+        if(formset.is_valid()):
+            formset.save()
+            return HttpResponseRedirect('/assetpost/multipost/')
+
+    else:
+        formset = PostEntryFormset(initial=[{'client': client, 'job_number': id,},{'client': client, 'job_number': id,},{'client': client, 'job_number': id,},{'client': client, 'job_number': id,},{'client': client, 'job_number': id,},{'client': client, 'job_number': id,}])
+        clients = ClientList.objects.all()
+        variables = RequestContext(request, {'clients' : clients, 'formset':formset })
+        return render_to_response("assetpost/multipost_form.html", variables)
+ 
+
+class PostEntryUpdate(UpdateView):
+    model = PostEntry
+    fields = ['client', 'job_number', 'cell_number', 'post_title', 'date', 'post_type', 'post_round', 'preview_file', 'url_link', 'link_pdf', 'link_html', 'link_report', 'link_text', 'link_zip']
+    success_url = "../assetpost/newpostentry/"
+
+
+class PageCreate(CreateView):
+    model = PostPage
+    fields = ['client', 'job_number', 'job_name', 'page_type', 'create_date',  'contact']
+    success_url = "/main/"
+
+class PageUpdate(UpdateView):
+    model = PostPage
+    fields = ['client', 'job_number', 'job_name', 'page_type', 'create_date',  'contact']
+    template_name = 'assetpost/pageupdate_form.html'
+    success_url = "/"
+
+
+def create_postpage(request):
+    tpl = "createpostpage.html"
+    user = request.user
+    variables = RequestContext(request, { 'user': user }) 
+    return TemplateResponse(request, tpl, {'form': PageForm()})
+
+
+    
+def file_browser(request):
+    tpl = "admin_filebrowser.html"
+    clients = ClientList.objects.all()
+    user = request.user
+    variables = RequestContext(request, { 'user': user, 'clients' : clients }) 
+    return render_to_response(tpl, variables)
+
+    
+    
+@login_required(login_url='/') 
+def postsearch(request):
+                        form = PostsearchForm() 
+
+                        pagelinks = []
+                        clientlinks = []
+
+                        show_results = True 
+                        if 'query' in request.GET: 
+                                show_results = True 
+                                query = request.GET['query'].strip() 
+                                if query:
+                                        form = PostsearchForm({'query' : query}) 
+                                        pagelinks = \
+                                                PostPage.objects.filter(job_number__iexact=query)
+                                        clientlinks = \
+                                                PostPage.objects.filter(client__name__icontains=query)
+        
+
+                        if len(clientlinks) >= 1:
+                                user = request.user
+                                records = PostPage.objects.filter(Q(client__name__icontains=query) & Q(page_type__iexact="POST")).order_by('-job_number')
+                                cellrecords = PostEntry.objects.filter(client__name__icontains=query)
+                                clients = ClientList.objects.all()
+                                t = get_template('list_template.html')
+                                html = t.render(Context({'user': user, 'records': records, 'cellrecords': cellrecords, 'form': form }))
+                                #return HttpResponse(html)
+                                return render_to_response('list_template.html', {'user': user, 'records': records, 'cellrecords': cellrecords, 'clients': clients, 'form': form}, context_instance=RequestContext(request))
+
+
+                        if    len(pagelinks) >= 1:
+                                user = request.user
+                                records = PostPage.objects.filter(Q(job_number__icontains=query) & Q(page_type__iexact="POST")).order_by('-create_date')
+                                cellrecords = PostEntry.objects.filter(job_number__icontains=query)
+                                clients = ClientList.objects.all()
+                                t = get_template('list_template.html')
+                                html = t.render(Context({'user': user, 'records': records, 'cellrecords': cellrecords, 'form': form}))
+                                #return HttpResponse(html)
+                                return render_to_response('list_template.html', {'user': user, 'records': records, 'cellrecords': cellrecords, 'clients': clients, 'form': form}, context_instance=RequestContext(request))
+
+                        else:
+                                user = request.user
+                                tpl = "list_template.html"
+                                clients = ClientList.objects.all()
+                                variables = RequestContext(request, {'user': user, 'clients' : clients, 'form': form,
+                                'show_results': show_results}) 
+                                return render_to_response(tpl, variables)
+
+
+def quickpost(request, job_number):
+    records = PostEntry.objects.filter(job_number=job_number)
+    precords = PostPage.objects.filter(job_number=job_number).order_by('-create_date')
+    cdrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='cd_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
+    cerecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='ce_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
+    cmrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='cm_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
+    mrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='m_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
+    frrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='FinalRelease').order_by('-date', '-post_round', 'cell_number', 'post_title')
+
+    if request.method == 'POST':
+        form = PostEntryForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            tpl = 'quickpost.html'
+            variables = RequestContext(request, {'form':form, 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
+            return HttpResponseRedirect('/quickpost/' + job_number + '/')
+        
+        else:
+                tpl = 'quickpost.html'
+                variables = RequestContext(request, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
+                return render_to_response(tpl, variables)
+    else:
+        form = PostEntryForm()
+        tpl = 'quickpost.html'
+        variables = RequestContext(request, { 'form':form, 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
+        return render_to_response(tpl, variables)
+
+
 
 def display_record(request, job_number):
             records = PostEntry.objects.filter(job_number=job_number)
@@ -68,207 +281,5 @@ def display_record(request, job_number):
 
 
 
-
 def file_upload(request):
                 return render_to_response('upload.html')
-
-
-
-
-
-
-
-@csrf_protect
-def create_record(request):
-        if request.method == 'POST': # If the form has been submitted...
-            form = PostRequestForm(request.POST) # A form bound to the POST data
-            if form.is_valid():  #All validation rules pass
-                        # Process the data in form.cleaned_data
-                form.save()
-                return HttpResponseRedirect('/create/')
-        else:
-            form = PostRequestForm()
-        return render(request, 'createpostrequest.html', {
-            'form': form,
-    })
-
-def create_postpage(request):
-    tpl = "createpostpage.html"
-    user = request.user
-    variables = RequestContext(request, { 'user': user }) 
-    return TemplateResponse(request, tpl, {'form': PageForm()})
-
-
-def create_postentry(request):
-    if request.method == 'POST':
-        form = PostEntryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/newpostentry/')
-    else:
-        form = PostEntryForm()
-    return render(request,'createpostentry.html', {'form':form})
-    
-def file_browser(request):
-    tpl = "admin_filebrowser.html"
-    user = request.user
-    variables = RequestContext(request, { 'user': user }) 
-    return render_to_response(tpl, variables)
-    
-def display_profile(request, id):
-    profiles = UserProfile.objects.filter(pk=id)
-    tpl = 'profile_page.html'
-    return render_to_response(tpl, {'profiles': profiles })
-
-@csrf_protect
-def post_status(request):
-    posts = PostRequest.objects.all()
-    amposts = PostRequest.objects.filter(client__iexact="Amazon")
-    apposts = PostRequest.objects.filter(client__iexact="Apple")
-    ggposts = PostRequest.objects.filter(client__iexact="Google")
-    inposts = PostRequest.objects.filter(client__iexact="Intel")
-    msposts = PostRequest.objects.filter(client__iexact="Microsoft")
-    psposts = PostRequest.objects.filter(client__iexact="PepsiCo")
-    vzposts = PostRequest.objects.filter(client__iexact="Verizon")
-    wdposts = PostRequest.objects.filter(client__iexact="Disney")
-    tpl = 'post_status.html'
-    return render_to_response(tpl, {'posts': posts, 'amposts': amposts, 'apposts': apposts, 'ggposts': ggposts, 'inposts': inposts, 'msposts': msposts, 'psposts': psposts, 'vzposts': vzposts, 'wdposts': wdposts })
-
-def display_post(request, id):
-        if request.method == 'POST':
-                a = PostRequest.objects.get(pk=id)
-                form = PostRequestForm(request.POST, instance=a)
-                if form.is_valid():
-                        form.save()
-                        return HttpResponseRedirect('/poststatus/')
-        else:
-                a = PostRequest.objects.get(pk=id)
-                form = PostRequestForm(instance=a)
-        return render_to_response('createpostrequest.html', {'form': form})
-
-def edit_postentry(request, id):
-    records = PostRequest.objects.get(pk=id)
-    tpl = 'admin_editpostentry.html'
-    return render_to_response(tpl, {'records': records,})
-    
-    
-@login_required(login_url='/') 
-def postsearch(request):
-                        form = PostSearchForm() 
-
-                        pagelinks = []
-                        clientlinks = []
-
-                        show_results = True 
-                        if 'query' in request.GET: 
-                                show_results = True 
-                                query = request.GET['query'].strip() 
-                                if query:
-                                        form = PostSearchForm({'query' : query}) 
-                                        pagelinks = \
-                                                PostPage.objects.filter(job_number__iexact=query)
-                                        clientlinks = \
-                                                PostPage.objects.filter(client__name__icontains=query)
-        
-
-                        if len(clientlinks) >= 1:
-                                user = request.user
-                                records = PostPage.objects.filter(Q(client__name__icontains=query) & Q(page_type__iexact="POST")).order_by('-job_number')
-                                t = get_template('list_template.html')
-                                html = t.render(Context({'user': user, 'records': records, 'form': form }))
-                                return HttpResponse(html)
-
-                        if    len(pagelinks) >= 1:
-                                user = request.user
-                                records = PostPage.objects.filter(Q(job_number__icontains=query) & Q(page_type__iexact="POST")).order_by('-create_date')
-                                t = get_template('list_template.html')
-                                html = t.render(Context({'user': user, 'records': records, 'form': form}))
-                                return HttpResponse(html)
-
-                        else:
-                                user = request.user
-                                tpl = "list_template.html"
-                                variables = RequestContext(request, {'user': user, 'form': form,
-                                'show_results': show_results}) 
-                                return render_to_response(tpl, variables)
-
-def display_prdInboxEntry(request, id):
-    if request.method == 'POST':
-        form = PrdInboxForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/production-display/'+ id +'/')
-        else:
-            form = PrdInboxForm(request.POST)
-            return HttpResponseRedirect('/production-display/'+ id +'/')
-            
-    else:
-        form = PrdInboxForm()
-        user = request.user
-        u = UserProfile.objects.get(pk=id)
-        assignedrecords = InboxEntry.objects.filter(assigned_by=u)
-        creativerecords = InboxEntry.objects.filter(box__iexact="Creative").order_by('status')
-        studiorecords = InboxEntry.objects.filter(box__iexact="Studio").order_by('status')
-        t = ProjectTeam.objects.get(team_name="Studio")
-        records = InboxEntry.objects.filter(Q(assigned_to=u) | Q(assigned_team=t)).order_by('status')
-        return render_to_response('home_inbox.html', {'form': form, 'assignedrecords': assignedrecords, 'records': records, 'studiorecords': studiorecords, 'creativerecords': creativerecords, 'user': user}, context_instance=RequestContext(request))
-
-
-def delete_prdInboxEntry(request, id, userid):
-    if request.method == 'POST':
-        a=InboxEntry.objects.get(pk=id)
-        form = PrdInboxForm(request.POST, instance=a)
-        if form.is_valid():
-            form.delete()
-            return HttpResponseRedirect('/production-display/'+ userid +'/')
-    else:
-        a=InboxEntry.objects.get(pk=id)
-        form = PrdInboxForm(instance=a)
-        user = request.user
-        u = UserProfile.objects.get(pk=userid)
-        creativerecords = InboxEntry.objects.filter(box="Creative")
-        studiorecords = InboxEntry.objects.filter(box="Studio")
-        records = InboxEntry.objects.filter(assigned_to=u)
-    return render(request, 'home_inbox.html', {'form': form, 'records': records, 'studiorecords': studiorecords, 'creativerecords': creativerecords, 'user': user})
-
-
-
-
-def edit_prdInboxEntry(request, id, userid):
-    if request.method == 'POST':
-        a=InboxEntry.objects.get(pk=id)
-        form = PrdInboxForm(request.POST, instance=a)
-        if request.POST.get('delete'):
-            a.delete()
-            return HttpResponseRedirect('/production-display/'+ userid +'/')
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/production-display/'+ userid +'/')
-    else:
-        a=InboxEntry.objects.get(pk=id)
-        form = PrdInboxForm(instance=a)
-        user = request.user
-        u = UserProfile.objects.get(pk=userid)
-        assignedrecords = InboxEntry.objects.filter(assigned_by=u)
-        creativerecords = InboxEntry.objects.filter(box="Creative")
-        studiorecords = InboxEntry.objects.filter(box="Studio")
-        records = InboxEntry.objects.filter(assigned_to=u)
-        return render_to_response('home_inbox.html', {'form': form, 'assignedrecords': assignedrecords, 'records': records, 'studiorecords': studiorecords, 'creativerecords': creativerecords, 'user': user}, context_instance=RequestContext(request))
-
-
-def quickpost(request, job_number):
-            records = PostEntry.objects.filter(job_number=job_number)
-            precords = PostPage.objects.filter(job_number=job_number).order_by('-create_date')
-            cdrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='cd_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
-            cerecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='ce_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
-            cmrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='cm_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
-            mrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='m_round').order_by('-date', '-post_round', 'cell_number', 'post_title')
-            frrecords = PostEntry.objects.filter(job_number=job_number, post_type__iexact='FinalRelease').order_by('-date', '-post_round', 'cell_number', 'post_title')
-
-            if request.user.is_authenticated():
-                    tpl = 'quickpost.html'
-                    return render_to_response(tpl, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
-            else:
-                    tpl = 'quickpost.html'
-                    return render_to_response(tpl, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
-

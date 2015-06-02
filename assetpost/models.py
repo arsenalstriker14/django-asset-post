@@ -29,19 +29,7 @@ POST_CHOICES = (
     ('m_round', 'Print Mechanical Round'),
     ('FinalRelease', 'Final Release'),
 )
-PRINT_CHOICES = (
-    ('comp', 'comp'),
-    ('creative execution', 'creative execution'),
-    ('mechanical set', 'mechanical set'),
-    ('mechanical revision', 'mechanical revision'),
-    ('revise & post', 'revise & post'),
-    ('post', 'post'),
-    ('queue to release', 'queue to release'),
-    ('release', 'release'),
-    ('post release revision', 'post release revision'),
-    ('re-release', 're-release'),
-    ('retouching', 'retouching'),
-)
+
 
 EMP_GROUP_CHOICES = (
     ('Account', 'Account'),
@@ -63,19 +51,6 @@ TEAM_CHOICES = (
 
 )
 
-STATUS_CHOICES = (
-    ('Awaiting Action', 'Awaiting Action'),
-    ('In Progress', 'In Progress'),
-    ('Completed', 'Completed'),
-    ('Posted', 'Posted'),
-    ('Released', 'Released'),
-)
-INBOX_CHOICES = (
-    ('Studio', 'Studio'),
-    ('Creative', 'Creative'),
-    ('Personal', 'Personal'),
-)
-
 LINK_CHOICES = (
         ('yes', 'yes'),
 )
@@ -83,13 +58,6 @@ LINK_CHOICES = (
 DISPLAY_CHOICES = (
         ('visible', 'visible'),
         ('hidden', 'hidden'),
-)
-
-TYPE_CHOICES = (
-        ('Set Mechanical', 'Set Mechanical'),
-        ('Revise Mechanical', 'Revise Mechanical'),
-        ('Package Release', 'Package Release'),
-        ('Other', 'Other'),
 )
 
 class OverwriteStorage(FileSystemStorage):
@@ -124,7 +92,6 @@ def content_file_name(instance, filename):
         return '/'.join([ instance.client.name, instance.job_number, instance.post_type + "_" + instance.post_round, instance.job_number + "-" + instance.cell_number, filename])
 
 class PostEntry(models.Model):
-            visibility = models.CharField(max_length=7, choices=DISPLAY_CHOICES, default='visible')
             client = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
             job_number = models.CharField(validators=[RegexValidator(regex='^\w{8}$', message='Please enter a valid job number', code='nomatch')], max_length=8, unique=False, blank=False, null=False)
             cell_number = models.CharField(max_length=4, unique=False, blank=True, null=True)
@@ -132,27 +99,15 @@ class PostEntry(models.Model):
             date = models.DateField(("Date"), default=datetime.date.today)
             post_type = models.CharField(max_length=64, choices=POST_CHOICES)
             post_round = models.CharField(max_length=20, blank=False, null=False)
-            is_rerelease = models.BooleanField(default=False)
-            docfile = models.FileField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True, null=True, max_length=300)
+            preview_file = models.FileField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True, null=True, max_length=300)
             url_link = models.URLField(blank=True, null=False, max_length=300)
-            add_misc = models.NullBooleanField()
-            misc_link = models.CharField(max_length=64, blank=True, null=True)
-            link_misc = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_misc2 = models.NullBooleanField()
-            misc_link2 = models.CharField(max_length=64, blank=True, null=True)
-            link_misc2 = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_mobile_view = models.NullBooleanField()
-            mobile_view_url = models.URLField(validators=[RegexValidator(regex='^(http|https)://', message='url must begin with http or https', code='nomatch')], blank=True, null=False, max_length=300)
-            add_pdf = models.NullBooleanField()
+            
             link_pdf = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_html = models.NullBooleanField()
             link_html = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_report = models.NullBooleanField()
             link_report = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_text = models.NullBooleanField()
             link_text = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
-            add_zip = models.NullBooleanField()
             link_zip = models.FileField(upload_to=content_file_name, blank=True, null=True, max_length=300)
+
             
 
             def __str__(self):
@@ -228,7 +183,6 @@ class PostPage(models.Model):
         client = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
         job_number = models.CharField(max_length=8, unique=True, blank=False, null=False)
         job_name = models.CharField(max_length=64, unique=False, blank=False, null=False)
-        page_type = models.CharField(max_length=50, default='POST')
         create_date = models.DateField(("Date"), default=datetime.date.today)
         contact = models.ManyToManyField(AccountGroup)
 
@@ -353,55 +307,3 @@ class ProjectTeam(models.Model):
                 pass
 
 
-class InboxEntry(models.Model):
-        job_number = models.CharField(max_length=14, unique=False, blank=False, null=False)
-        cell_number = models.CharField(max_length=20, unique=False, blank=True, null=True)
-        job_name = models.CharField(max_length=64, unique=False, blank=False, null=False)
-        request = models.CharField(max_length=64, choices=PRINT_CHOICES, blank=True, null=True)
-        date_in = models.DateField(("Date"), auto_now=True)
-        date_due = models.DateTimeField(("Due"),auto_now=False)
-        basecamp_link = models.URLField(validators=[RegexValidator(regex='^(http|https)://', message='url must begin with http or https', code='nomatch')], blank=True, null=False, max_length=300)
-        note = models.TextField(max_length=1000, unique=False, blank=True, null=True)
-        assigned_by = models.ForeignKey(UserProfile, blank=False, null=False)
-        box = models.CharField(max_length=64, choices=INBOX_CHOICES)
-        assigned_to = models.ManyToManyField(UserProfile, related_name='+', blank=True)
-        assigned_team = models.ManyToManyField(ProjectTeam, blank=True)
-        status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="Awaiting Action")
-        accepted_by = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True)
-        completed_on = models.DateTimeField(("Completed"),auto_now=False, blank=True, null=True)
-
-        def __str__(self):
-            return u'%s %s' % (self.job_number, self.job_name)
-
-        class Admin: 
-            pass
-            
-        class Meta:
-            ordering = ['status']
-
-
-class InboxEntryFilter(django_filters.FilterSet):
-        basecamp_link = django_filters.AllValuesFilter(widget=django_filters.widgets.LinkWidget)
-        status = django_filters.AllValuesFilter(widget=django_filters.widgets.LinkWidget)
-        class Meta:
-                model = InboxEntry
-                fields =  ['job_number', 'cell_number', 'job_name', 'basecamp_link', 'note', 'status']
-
-class TaskEntry(models.Model):
-        project = models.CharField(validators=[RegexValidator(regex='^\w{8}$', message='Please enter a valid job number', code='nomatch')], max_length=8, unique=False, blank=False, null=False)
-        project_type = models.CharField(max_length=64, choices=TYPE_CHOICES)
-        description = models.CharField(max_length=200, unique=False, blank=True, null=True)
-        message = models.TextField(max_length=500, unique=False, blank=True, null=True)
-        created_by = models.ForeignKey(UserProfile, blank=True, null=True, on_delete=models.SET_NULL)
-        assigned_team = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
-        assigned_member = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
-        create_date = models.DateTimeField(auto_now_add=True)
-        due_date = models.DateTimeField(auto_now_add=False)
-        completed_by = models.ForeignKey(UserProfile, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
-        returned = models.DateTimeField(auto_now_add=False)
-
-        def __str__(self):
-            return u'%s %s' % (self.project, self.description)
-
-        class Admin: 
-            pass

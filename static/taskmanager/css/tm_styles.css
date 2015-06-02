@@ -1,0 +1,60 @@
+            p{margin:0;}
+            html {width:880px;height:400px;}
+            body{font-family:Helvetica, Arial, sans-serif;font-size:10px; font-weight:bold;color:#777;width:1200px;height:800px;}
+            input{width:300px;}
+            select{font-size:10px;max-width:150px;}
+            thead tr th{padding-bottom:7px;}
+            th{padding:2px 5px;}
+            td{padding:2px 5px; max-width:250px;overflow:hidden;font-weight:normal;}
+            td > .container{max-width:200px;padding:0;}
+            table.display_table td{max-width:300px;}
+            input#inbox_submit_btn, input#inbox_delete_btn{display:inline;width:100px;}
+            #contact_box{position:relative; display:block;width:1400px;}
+            .status_cell{font-weight:bold;color:maroon;}
+            .shell{z-index:500;}
+          /*  .tlist{position:absolute;left:40px;top:360px;}*/
+            #personal_tlist{display:block;}
+            #assigned_tlist, #tlist_1, #tlist_2, #tlist_3, #tlist_4, #tlist_5{display:none;}
+            .formdiv{
+                display:inline-block;padding:10px;margin:15px;border: 1px solid #333;
+            }
+            .required{font-color:maroon;font-weight:bolder;}
+            label{font-size:1.1em;}
+            #admin_console{display:none;}
+            .round{
+                        border: 1px solid #eee;
+                        border: 1px solid rgba(0, 0, 0, 0.05);
+                        -webkit-border-radius: 4px;
+                        -moz-border-radius: 4px;
+                        border-radius: 4px;
+                        padding: 10px;
+                        margin-bottom: 5px;
+                    }
+            .edit_btn{width:40px;}
+            /*#id_cell_number{width:60px;height:15px;font-size:11px;}
+            #id_job_number{width:90px;height:15px;font-size:11px;}
+            #id_job_name{width:200px;height:15px;font-size:11px;}
+            #id_basecamp_link{max-width:150px;height:15px;font-size:11px;}
+            .basecamp, .note{max-height:15px;overflow:hidden;max-width:150px;}
+            #id_note{max-width:150px;height:15px;font-size:11px;font-color:maroon;}
+            #id_assigned_team{max-height:30px;}
+            #id_date_due, #id_completed_on{width:160px;font-size:10px;height:15px;}
+            #logo_wrapper {position:relative; display:block; top:0; left: 0; width:880px; height:60px; background-color:white;}
+
+            #form_div{padding:25px 30px 25px 50px;border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px;background-color:#ddd;width:1050px;}
+            label{font-size:9px;}
+            #taskbox_form{width:950px;}*/
+.tooltip {
+    display:none;
+    background-color:#000;
+    font-size:12px;
+    height:70px;
+    width:160px;
+    padding:25px;
+    color:#fff;
+  }
+  #tbox_menu ul {position:relative; display:block; margin:0 auto;}
+  #tbox_menu li {display:inline;padding:10px;list-style:none;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;background-color:#ddd;cursor:pointer;}
+  #tbox_menu li:hover {background-color:#efefef;}
+            </style>
+  

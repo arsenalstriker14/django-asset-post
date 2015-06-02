@@ -105,7 +105,7 @@ input.qp_inp{
 				</div> 
 				<div class="dropdown dropdown-support"> 
 					<div class="inner">  
-					<!--	<a class='inactive' href='../../leave_request/{{ request.user.get_profile.id }}'>Leave Requests / Records</a> -->
+					<!--	<a class='inactive' href='../../leave_request/{{ user.userprofile.id }}'>Leave Requests / Records</a> -->
 						<a class='inactive' href='/../logout/'>Logout</a>
 					</div> 
 				</div>
@@ -141,7 +141,7 @@ input.qp_inp{
 			}
 			
 			</script>
-			<div id="quickpost_button"><input type="text" id="job_id" class="qp_inp" /><a id="job_id_link" href="../../quickpost/" onclick="processJobNumber();return(false);" /><img  width="65" height="22" src="../../../../site_media/images/quickpost_btn.png" /></a><a href="../../production-display/{{ request.user.get_profile.id }}" onclick="showDashboard(this.href);return(false);"><img  width="65" height="22" src="../../../../site_media/images/inbox_btn.png" /></a>
+			<div id="quickpost_button"><input type="text" id="job_id" class="qp_inp" /><a id="job_id_link" href="../../quickpost/" onclick="processJobNumber();return(false);" /><img  width="65" height="22" src="../../../../site_media/images/quickpost_btn.png" /></a><a href="../../production-display/{{ user.userprofile.id }}" onclick="showDashboard(this.href);return(false);"><img  width="65" height="22" src="../../../../site_media/images/inbox_btn.png" /></a>
 			<a id="job_id_link" href="../../branding/" onclick="processBranding();return(false);" /><img  width="65" height="22" src="../../../../site_media/images/branding_btn.png" /></a>
 			</div>
 			</div>

@@ -94,9 +94,9 @@ Element.prototype.getElementsByClassName = function(class_name) {
 					<div class="entry_box_wrapper {{ cerecord.visibility }}">
 						<div id="ce_round{{ cerecord.post_round }}" title="{{ cerecord.date }}" class="entry_header sanserif12pxbd 
 						{{ cerecord.post_type }}{{ cerecord.post_round }}" style="line-height:2;"><hr />Creative Execution Round&nbsp;{{ cerecord.post_round }} &#151; {{ cerecord.date|date:"F d, Y" }}</div>
-						<div class="entry_title sanserif12px">{% if cerecord.docfile = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
-							{{ cerecord.post_title }}{% elif cerecord.docfile = "" %}<a href="{{ cerecord.url_link }}" 
-							target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.docfile }}" 
+						<div class="entry_title sanserif12px">{% if cerecord.preview_file = "" and "http" not in cerecord.url_link %}-{{ cerecord.cell_number }}&nbsp;
+							{{ cerecord.post_title }}{% elif cerecord.preview_file = "" %}<a href="{{ cerecord.url_link }}" 
+							target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% else %}<a href="/media/{{ cerecord.preview_file }}" 
 							target="_blank">-{{ cerecord.cell_number }}&nbsp;{{ cerecord.post_title }}</a>{% endif %}
 						</div>
 						
@@ -179,9 +179,9 @@ Element.prototype.getElementsByClassName = function(class_name) {
 					<div class="entry_box_wrapper {{ cdrecord.visibility }}">
 						<div id="cd_round{{ cdrecord.post_round }}" title="{{ cdrecord.date }}" class="entry_header sanserif12pxbd 
 						{{ cdrecord.post_type }}{{ cdrecord.post_round }}" style="line-height:2;"><hr />Concept Development Round&nbsp;{{ cdrecord.post_round }} &#151; {{ cdrecord.date|date:"F d, Y" }}</div>
-						<div class="entry_title sanserif12px">{% if cdrecord.docfile = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
-							{{ cdrecord.post_title }}{% elif cdrecord.docfile = "" %}<a href="{{ cdrecord.url_link }}" 
-							target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.docfile }}" 
+						<div class="entry_title sanserif12px">{% if cdrecord.preview_file = "" and "http" not in cdrecord.url_link %}-{{ cdrecord.cell_number }}&nbsp;
+							{{ cdrecord.post_title }}{% elif cdrecord.preview_file = "" %}<a href="{{ cdrecord.url_link }}" 
+							target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% else %}<a href="/media/{{ cdrecord.preview_file }}" 
 							target="_blank">-{{ cdrecord.cell_number }}&nbsp;{{ cdrecord.post_title }}</a>{% endif %}
 						</div>
 						
@@ -266,9 +266,9 @@ Element.prototype.getElementsByClassName = function(class_name) {
 					<div class="entry_box_wrapper {{cmrecord.visibility }}">
 						<div id="cm_round{{ cmrecord.post_round }}" title="{{ cmrecord.date }}" class="entry_header sanserif12pxbd 
 						{{ cmrecord.post_type }}{{ cmrecord.post_round }}" style="line-height:2;"><hr />Coded Asset Round&nbsp;{{ cmrecord.post_round }} &#151; {{ cmrecord.date|date:"F d, Y" }}</div>
-						<div class="entry_title sanserif12px">{% if cmrecord.docfile = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
-							{{ cmrecord.post_title }}{% elif cmrecord.docfile = "" %}<a href="{{ cmrecord.url_link }}" 
-							target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="/media/{{ cmrecord.docfile }}" 
+						<div class="entry_title sanserif12px">{% if cmrecord.preview_file = "" and "http" not in cmrecord.url_link %}-{{ cmrecord.cell_number }}&nbsp;
+							{{ cmrecord.post_title }}{% elif cmrecord.preview_file = "" %}<a href="{{ cmrecord.url_link }}" 
+							target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% else %}<a href="/media/{{ cmrecord.preview_file }}" 
 							target="_blank">-{{ cmrecord.cell_number }}&nbsp;{{ cmrecord.post_title }}</a>{% endif %}
 						</div>
 
@@ -351,9 +351,9 @@ Element.prototype.getElementsByClassName = function(class_name) {
 					<div class="entry_box_wrapper {{ mrecord.visibility }}">
 						<div id="m_round{{ mrecord.post_round }}" title="{{ mrecord.date }}" class="entry_header sanserif12pxbd 
 						{{ mrecord.post_type }}{{ mrecord.post_round }}" style="line-height:2;"><hr />Print Mechanical Round&nbsp;{{ mrecord.post_round }} &#151; {{ mrecord.date|date:"F d, Y" }}</div>
-						<div class="entry_title sanserif12px">{% if mrecord.docfile = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
-							{{ mrecord.post_title }}{% elif mrecord.docfile = "" %}<a href="{{ mrecord.url_link }}" 
-							target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.docfile }}" 
+						<div class="entry_title sanserif12px">{% if mrecord.preview_file = "" and "http" not in mrecord.url_link %}-{{ mrecord.cell_number }}&nbsp;
+							{{ mrecord.post_title }}{% elif mrecord.preview_file = "" %}<a href="{{ mrecord.url_link }}" 
+							target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% else %}<a href="/media/{{ mrecord.preview_file }}" 
 							target="_blank">-{{ mrecord.cell_number }}&nbsp;{{ mrecord.post_title }}</a>{% endif %}
 						</div>
 						
@@ -442,9 +442,9 @@ Element.prototype.getElementsByClassName = function(class_name) {
 							{{ frrecord.post_type }}" style="line-height:2;"><hr />{% if frrecord.is_rerelease = 1 %}<div style="margin-top:15px;"><span style="display:block;margin:0;line-height:.6;">ReRelease</span>{{ frrecord.date|date:"F d, Y" }}</div>{% else %}{{ frrecord.date|date:"F d, Y" }}{% endif %}
 							</div>
 							
-							<div class="entry_title sanserif12px">{% if frrecord.docfile = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
-								{{ frrecord.post_title }}{% elif frrecord.docfile = "" %}<a href="{{ frrecord.url_link }}" 
-								target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.docfile }}" 
+							<div class="entry_title sanserif12px">{% if frrecord.preview_file = "" and "http" not in frrecord.url_link %}-{{ frrecord.cell_number }}&nbsp;
+								{{ frrecord.post_title }}{% elif frrecord.preview_file = "" %}<a href="{{ frrecord.url_link }}" 
+								target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% else %}<a href="/media/{{ frrecord.preview_file }}" 
 								target="_blank">-{{ frrecord.cell_number }}&nbsp;{{ frrecord.post_title }}</a>{% endif %}
 							</div>
 
