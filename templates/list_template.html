@@ -41,6 +41,13 @@
         .bootstrap-table .table > thead > tr > th {
             border-bottom: 0px solid #ddd;
         }
+
+        summary::-webkit-details-marker {
+            color:blue;
+        }
+
+        details[open] summary::-webkit-details-markeblue#0000FF;
+        }
         </style>
         <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -53,12 +60,18 @@
 {% block content %}
 	<iframe id="inbox_frame" src="" width="100%" height="100%"></iframe>
 	<div id="list_controls" class="container stage">
-		<div class="row">
+		<div class="row searchform">
 			<div class="col-md-12">
 				<div class="well">
 					
                     {% crispy form %}
-
+                   <!-- <details>
+                        <summary>Page Information</summary>
+                        <p>Entering a client name or job number in the main search field yields post pages and records associated with your search term. 
+                        <p>Entering a valid job number in the upper search field enables the QuckPost module, while entering a job number in the upper search field AND choosing a client from the pulldown menu will enable the Multipost module. 
+                        <p>Finally, track your specific tasks via the Taskmanager module.
+                    </details> -->
+                    
 				</div>
 			</div>
 		</div>
@@ -66,6 +79,7 @@
 				{% if records or cellrecords %}
 	   		<div class="col-md-5">
 	   			<div class="well">
+                  <h4>pages</h4> 
                     <table  
                             data-toggle="table"  
                             data-query-params="queryParams"
@@ -96,6 +110,7 @@
 		 	</div>
 			<div class="col-md-7">
 	   			<div class="well">
+                  <h4>entries</h4>
 					<table  
                             data-toggle="table"  
                             data-query-params="queryParams"

@@ -18,17 +18,23 @@ from django.conf.urls import include, patterns, url
 from django.contrib import admin
 from assetpost.views import *
 from filebrowser.sites import site
+from django.conf.urls import include, url
+from rest_framework.authtoken.views import obtain_auth_token
+
+from assetpost.urls import router
 
 if settings.DEBUG:
     import debug_toolbar
 
 
 urlpatterns = [
+    url(r'^api/token/', obtain_auth_token, name='api-token'),
+    url(r'^api/', include(router.urls)),
     url('^', include('django.contrib.auth.urls')),
     url(r'^$', login_user, name ='login_user'),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
     url(r'^main/', postsearch),
-    url(r'^logout/$', logout_page),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
     url(r'^filebrowser/', file_browser),
     url(r'^assetpost/', include('assetpost.urls', namespace='assetpost', app_name='assetpost')),
     url(r'^upload/', file_upload),
@@ -37,7 +43,7 @@ urlpatterns = [
 #    url(r'^delete-item/(?P<id>\w+)/(?P<userid>\w+)/', delete_prdInboxEntry),
     url(r'^specdisplay/(?P<job_number>[A-Z0-9-]+)/', display_record, name="display_record"),
     url(r'^admin/filebrowser/', include(site.urls)),
-    url(r'^grappelli/', include('grappelli.urls')),
+    url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 urlpatterns += (

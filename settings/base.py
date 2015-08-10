@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import json
 from django.core.exceptions import ImproperlyConfigured
 
+
+
+
 with open("secrets.json") as f:
     secrets = json.loads(f.read())
 
@@ -25,9 +28,6 @@ def get_secret(setting, secrets=secrets):
         raise ImproperlyConfigured(error_msg)
 
 SECRET_KEY = get_secret("SECRET_KEY")
-
-
-
 
 
 
@@ -52,9 +52,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'grappelli',
-    'filebrowser',
     'django.contrib.contenttypes',
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
+    'filebrowser',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sessions',
@@ -62,6 +65,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_filters',
     'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken',
     'assetpost',
     'taskmanager',
     'bootstrap3_datetime',

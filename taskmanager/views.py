@@ -6,21 +6,7 @@ from .forms import *
 from django.db.models import Q
 from assetpost.models import UserProfile 
 from django.db.models.fields.related import ManyToManyField
-
-def to_dict(instance):
-    opts = instance._meta
-    data = {}
-    for f in opts.concrete_fields + opts.many_to_many:
-        if isinstance(f, ManyToManyField):
-            if instance.pk is None:
-                data[f.name] = []
-            else:
-                data[f.name] = list(f.value_from_object(instance).values_list('pk', flat=True))
-        else:
-            data[f.name] = f.value_from_object(instance)
-    return data
-
-
+from django.contrib import messages
 
 
 def display_prdInboxEntry(request, id):
@@ -28,6 +14,7 @@ def display_prdInboxEntry(request, id):
         form = PrdInboxForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Entry successfully submitted.')
             return HttpResponseRedirect('taskmanager/display/'+ id +'/')
         else:
             form = PrdInboxForm(request.POST)
@@ -57,6 +44,7 @@ def delete_prdInboxEntry(request, id, userid):
         form = PrdInboxForm(request.POST, instance=a)
         if form.is_valid():
             form.delete()
+            messages.success(request, 'Entry successfully deleted.')
             return HttpResponseRedirect('/taskmanager/display/'+ userid +'/')
     else:
         a=InboxEntry.objects.get(pk=id)
@@ -85,9 +73,11 @@ def edit_prdInboxEntry(request, id, userid):
         form = PrdInboxForm(request.POST, instance=a)
         if request.POST.get('delete'):
             a.delete()
+            messages.success(request, 'Entry successfully deleted.')
             return HttpResponseRedirect('/taskmanager/display/'+ userid +'/')
         if form.is_valid():
             form.save()
+            messages.success(request, 'Entry successfully modified.')
             return HttpResponseRedirect('/taskmanager/display/'+ userid +'/')
     else:
         a=InboxEntry.objects.get(pk=id)

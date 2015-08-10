@@ -53,7 +53,6 @@
     padding:25px;
     color:#fff;
   }
-  #tbox_menu ul {position:relative; display:block; margin:0 auto;}
   #tbox_menu li {display:inline;padding:10px;list-style:none;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;background-color:#ddd;cursor:pointer;}
   #tbox_menu li:hover {background-color:#efefef;}
             </style>

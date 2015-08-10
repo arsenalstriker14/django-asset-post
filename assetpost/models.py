@@ -6,6 +6,8 @@ from django.core.files.storage import FileSystemStorage
 from django.forms import ModelForm
 from django.db.models import TextField
 from django.contrib.auth.models import User 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseRedirect
@@ -123,11 +125,12 @@ class PostEntry(models.Model):
 
             class Admin: 
                     pass
-
+import logging
+logr = logging.getLogger(__name__)
 
 class UserProfile(models.Model):  
 #    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, null=True, on_delete=models.SET_NULL)
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, unique=True, null=True, on_delete=models.SET_NULL)
     fullname = models.CharField(max_length=64, unique=False)
     company = models.ForeignKey(ClientList, blank=False, null=True, db_column='client', on_delete=models.SET_NULL)
     position = models.CharField(max_length=64, unique=False, blank=True, null=True)
@@ -146,17 +149,22 @@ class UserProfile(models.Model):
     notes = models.TextField(max_length=2000, blank=True, null=True)
     email = models.EmailField()
 
-#    User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
-  
-  
+
     def __str__(self):
-        return u'%s' % self.fullname
+        return u'%s %s %s' % (self.user.first_name, " ", self.user.last_name) 
         
     class Meta:
-            ordering = ['fullname']
+            ordering = ["user__last_name"]
 
     class Admin: 
         pass  
+
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+  
+@receiver(post_save, sender=User)
+def make_sure_user_profile_is_added_on_user_created(sender, **kwargs):
+    if kwargs.get('created', False):
+        UserProfile.objects.create(user=kwargs.get('instance'))
 
 
 class TaskGroup(models.Model):

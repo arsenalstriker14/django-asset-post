@@ -27,24 +27,16 @@ def awaiting_action(modeladmin, request, queryset):
 awaiting_action.short_description = "Mark selected projects as Awaiting Action"
 
 class InboxEntryAdmin(admin.ModelAdmin):
-    list_display = ['job_number', 'cell_number', 'job_name', 'basecamp_link', 'note', 'status']
+    list_display = ['job_number', 'cell_number', 'job_name', 'request', 'priority', 'note', 'status']
     ordering = ['job_number']
     actions = [released, completed, posted, in_progress, awaiting_action]
-    
-    def basecamp_link(self,obj):
-        return u'<a href="/basecamp_link/%s/">%s</a>' % (obj.basecamp_link,obj)
-        domain_link.allow_tags = True
-        domain_link.short_description = "foo"
-        def __init__(self,*args,**kwargs):
-            super(ProductionInboxAdmin, self).__init__(*args, **kwargs)
-            self.list_display_links = (None, )
 
 
 admin.autodiscover()
 
 admin.site.register(InboxEntry, InboxEntryAdmin)
 admin.site.register(TaskBox)
-
+admin.site.register(InboxRequest)
 
 
 def main():

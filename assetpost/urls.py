@@ -1,5 +1,10 @@
 from django.conf.urls import patterns, url
-from .views import PostEntryUpdate, PageCreate, PageUpdate, createEntry, updateEntry, multipost, multipost_init
+from rest_framework.routers import DefaultRouter
+from .views import PostEntryUpdate, PageCreate, PageUpdate, createEntry, updateEntry, multipost, multipost_init, DefaultsMixin, EntryViewSet
+
+router = DefaultRouter()
+router.register(r'entries', EntryViewSet)
+
 
 urlpatterns = patterns('',
 #    url(r'^newpostentry/', PostEntryCreate.as_view(), name='post_entry'),

@@ -27,10 +27,36 @@ from django.template.response import TemplateResponse
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, View
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from rest_framework import authentication, permissions, viewsets
+
+from .models import PostEntry
+from .serializers import EntrySerializer
+from .tasks import SignUpTask
 
 # Create your views here.
+class DefaultsMixin(object):
+    """Default settings for view authentication, permissions,
+    filtering and pagination."""
+
+    authentication_classes = (
+        authentication.BasicAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+    paginate_by = 25
+    paginate_by_param = 'page_size'
+    max_paginate_by = 100
+
+class EntryViewSet(viewsets.ModelViewSet):
+    queryset = PostEntry.objects.order_by('client')
+    serializer_class = EntrySerializer
+
+
 def login_user(request):
-    logout(request)
     username = password = ''
     if request.POST:
         username = request.POST['username']
@@ -40,12 +66,13 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+                SignUpTask.delay(6, 7)
                 return HttpResponseRedirect('/main/')
     return render_to_response('registration/login.html', context_instance=RequestContext(request))
 
-def logout_page(request): 
-        logout(request) 
-        return HttpResponseRedirect('/')
+def logout_page(request):
+    logout(request)
+    return redirect('login_user')
 
 
 
@@ -98,11 +125,11 @@ def updateEntry(request, id):
         if request.POST.get('delete'):
             instance = PostEntry.objects.get(pk=id)
             instance.delete()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            return HttpResponseRedirect('/main/')
 
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            return HttpResponseRedirect('/main/')
         
     else:
         form = PostEntryForm(instance = PostEntry.objects.get(pk = id))
@@ -151,18 +178,18 @@ def multipost_init(request, client, id):
 
 class PostEntryUpdate(UpdateView):
     model = PostEntry
-    fields = ['client', 'job_number', 'cell_number', 'post_title', 'date', 'post_type', 'post_round', 'preview_file', 'url_link', 'link_pdf', 'link_html', 'link_report', 'link_text', 'link_zip']
+    fields = '__all__'
     success_url = "../assetpost/newpostentry/"
 
 
 class PageCreate(CreateView):
     model = PostPage
-    fields = ['client', 'job_number', 'job_name', 'page_type', 'create_date',  'contact']
+    fields = ['client', 'job_number', 'job_name', 'create_date',  'contact']
     success_url = "/main/"
 
 class PageUpdate(UpdateView):
     model = PostPage
-    fields = ['client', 'job_number', 'job_name', 'page_type', 'create_date',  'contact']
+    fields = ['client', 'job_number', 'job_name', 'create_date',  'contact']
     template_name = 'assetpost/pageupdate_form.html'
     success_url = "/"
 
@@ -205,7 +232,7 @@ def postsearch(request):
 
                         if len(clientlinks) >= 1:
                                 user = request.user
-                                records = PostPage.objects.filter(Q(client__name__icontains=query) & Q(page_type__iexact="POST")).order_by('-job_number')
+                                records = PostPage.objects.filter(client__name__icontains=query).order_by('-job_number')
                                 cellrecords = PostEntry.objects.filter(client__name__icontains=query)
                                 clients = ClientList.objects.all()
                                 t = get_template('list_template.html')
@@ -216,7 +243,7 @@ def postsearch(request):
 
                         if    len(pagelinks) >= 1:
                                 user = request.user
-                                records = PostPage.objects.filter(Q(job_number__icontains=query) & Q(page_type__iexact="POST")).order_by('-create_date')
+                                records = PostPage.objects.filter(job_number__icontains=query).order_by('-create_date')
                                 cellrecords = PostEntry.objects.filter(job_number__icontains=query)
                                 clients = ClientList.objects.all()
                                 t = get_template('list_template.html')

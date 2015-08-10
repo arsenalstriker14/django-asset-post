@@ -37,7 +37,7 @@
             window.location = href;
             }
         }
-        </script>
+       </script>
             {% block head_content %}{% endblock %}
 
     </head>
@@ -53,11 +53,19 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                <time></time>
                 <a class="navbar-brand" href="/main/">AssetPost</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/main/">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></li>
+                    <li class="active dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.first_name }}&nbsp;{{ user.last_name }}<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'logout' %}" class="">logout</a></li>
+                        </ul>
+                    </li>
+
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options<b class="caret"></b></a>
                         <ul class="dropdown-menu">
