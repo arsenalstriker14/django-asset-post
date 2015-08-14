@@ -12,7 +12,7 @@
             <form name="PostEntryForm" action=""  method="POST" enctype="multipart/form-data">{% csrf_token %}{{ form.non_field_errors }}
                   <div class="col-md-6">
                       <div class="well">
-                         <div class="fieldWrapper">
+                          <div class="fieldWrapper">
                               {{ form.client|as_crispy_field:"bootstrap" }}
                           </div>
                           <div class="fieldWrapper">
@@ -37,7 +37,7 @@
                   </div>
                   <div class="col-md-3">
                       <div class="well">
-                         <div class="fieldWrapper">
+                          <div class="fieldWrapper">
                               {{ form.preview_file|as_crispy_field:"bootstrap" }}
                           </div>
                           <div class="fieldWrapper">
@@ -58,6 +58,9 @@
                           <div class="fieldWrapper">
                               {{ form.link_zip|as_crispy_field:"bootstrap" }}
                           </div>
+                          <div>
+                              <input type="text" name="URL" id="refURL" class="hidden" /> 
+                          </div>
                       </div>
                   </div>
                 <input type="submit" name="delete" value="Delete" />
@@ -68,6 +71,12 @@
         
     </div>
 </div>
-
+<script type="text/javascript">
+  var refURL=document.referrer;
+  var target=document.getElementById('refURL');
+  target.value=refURL;
+  var hidden_items = document.querySelectorAll('hidden');
+  hidden_items.visibility = "hidden";
+</script>
 
         {% endblock %}

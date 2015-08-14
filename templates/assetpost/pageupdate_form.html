@@ -13,9 +13,12 @@
             
         </div>
         <div class="col-md-4">
-            <form name="PageForm" action="{% url 'assetpost:update_page' postpage.id %}" method="post">
+            <form name="PageForm" action="" method="post">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <div>
+                     <input type="text" name="URL" id="refURL" class="hidden" /> 
+                </div>
                 <input type="submit" value="Submit" />
             </form>
         </div>
@@ -25,6 +28,12 @@
         
     </div>
 </div>
-
+<script type="text/javascript">
+  var refURL=document.referrer;
+  var target=document.getElementById('refURL');
+  target.value=refURL;
+  var hidden_items = document.querySelectorAll('hidden');
+  hidden_items.visibility = "hidden";  
+</script>
 
         {% endblock %}

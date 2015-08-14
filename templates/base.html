@@ -61,7 +61,7 @@
                     <li class="active dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.first_name }}&nbsp;{{ user.last_name }}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{% url 'logout' %}" class="">logout</a></li>
+                            <li><a href="{% url "django.contrib.auth.views.logout" %}?next=/" class="">logout</a></li>
                         </ul>
                     </li>
 

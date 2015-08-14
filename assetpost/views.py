@@ -2,33 +2,13 @@ from django.shortcuts import render, redirect, render_to_response, get_object_or
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User 
 from django.template import Context, RequestContext
 from django.template.loader import get_template
-from .models import * 
+from .models import *
 from .forms import *
-from django import forms
-from django.conf import settings
-from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_protect
-from django.db.models import get_model
-from django import forms
-from django.forms import ModelForm
-from itertools import chain
-from django.db.models import Q
-from itertools import chain, islice
-import operator
-from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from datetime import datetime
 from django.forms.models import modelformset_factory, BaseModelFormSet
-from django.forms.formsets import formset_factory
 from django.template.response import TemplateResponse
-from django.views.generic import CreateView, ListView, TemplateView, UpdateView, View
-from braces.views import LoginRequiredMixin
-from django.core.urlresolvers import reverse_lazy, reverse
-from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.views.generic import CreateView, UpdateView
 from rest_framework import authentication, permissions, viewsets
 
 from .models import PostEntry
@@ -72,28 +52,8 @@ def login_user(request):
 
 def logout_page(request):
     logout(request)
-    return redirect('login_user')
+    return redirect('registration/login.html')
 
-
-
-# class PostEntryCreate(CreateView):
-#     model = PostEntry
-#     fields = ['client', 'job_number', 'cell_number', 'post_title', 'date', 'post_type', 'post_round', 'preview_file', 'url_link', 'link_pdf', 'link_html', 'link_report', 'link_text', 'link_zip']
-#     success_url = "../assetpost/newpostentry/"
-
-# def createEntry(request):
-#     if request.method == 'POST':
-#         form = PostEntryForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             template = "assetpost/postentry_form.html"
-#             variables = RequestContext(request, {'form':form})
-#             return render_to_response(template, variables)
-#     else:
-#         form = PostEntryForm()
-#         template = "assetpost/postentry_form.html"
-#         variables = RequestContext(request, {'form':form})
-#         return render_to_response(template, variables)
 
 def createEntry(request):
 
@@ -128,8 +88,9 @@ def updateEntry(request, id):
             return HttpResponseRedirect('/main/')
 
         if form.is_valid():
+            URL = request.POST.get('URL')
             form.save()
-            return HttpResponseRedirect('/main/')
+            return HttpResponseRedirect(URL)
         
     else:
         form = PostEntryForm(instance = PostEntry.objects.get(pk = id))
@@ -138,12 +99,32 @@ def updateEntry(request, id):
         return render_to_response(tpl, variables)
 
 
+def updatePage(request, id):
+    if request.method == 'POST':
+        form = PageForm(request.POST, request.FILES, instance = PostPage.objects.get(pk = id))
+        if request.POST.get('delete'):
+            instance = PostPage.objects.get(pk=id)
+            URL = request.POST.get('URL')
+            instance.delete()
+            return HttpResponseRedirect(URL)
+
+        if form.is_valid():
+            URL = request.POST.get('URL')
+            form.save()
+            return HttpResponseRedirect(URL)
+        
+    else:
+        form = PageForm(instance = PostPage.objects.get(pk = id))
+        tpl = 'assetpost/pageupdate_form.html'
+        variables = RequestContext(request, {'form':form })
+        return render_to_response(tpl, variables)
 
 
-class BasePostEntryFormSet(BaseModelFormSet):
-    def __init__(self, *args, **kwargs):
-        super(BasePostEntryFormSet, self).__init__(*args, **kwargs)
-        self.queryset = PostEntry.objects.none() 
+# class BasePostEntryFormSet(BaseModelFormSet):
+#     def __init__(self, *args, **kwargs):
+#         super(BasePostEntryFormSet, self).__init__(*args, **kwargs)
+#         self.queryset = PostEntry.objects.none()
+
 
 def multipost(request):
     PostEntryFormset = modelformset_factory(PostEntry, fields='__all__', extra=6, formset=BasePostEntryFormSet)
@@ -187,11 +168,12 @@ class PageCreate(CreateView):
     fields = ['client', 'job_number', 'job_name', 'create_date',  'contact']
     success_url = "/main/"
 
-class PageUpdate(UpdateView):
-    model = PostPage
-    fields = ['client', 'job_number', 'job_name', 'create_date',  'contact']
-    template_name = 'assetpost/pageupdate_form.html'
-    success_url = "/"
+
+# class PageUpdate(UpdateView):
+#     model = PostPage
+#     fields = ['client', 'job_number', 'job_name', 'create_date',  'contact', 'URL']
+#     template_name = 'assetpost/pageupdate_form.html'
+#     success_url = URL
 
 
 def create_postpage(request):
@@ -218,17 +200,16 @@ def postsearch(request):
                         pagelinks = []
                         clientlinks = []
 
-                        show_results = True 
-                        if 'query' in request.GET: 
-                                show_results = True 
-                                query = request.GET['query'].strip() 
+                        show_results = True
+                        if 'query' in request.GET:
+                                show_results = True
+                                query = request.GET['query'].strip()
                                 if query:
-                                        form = PostsearchForm({'query' : query}) 
+                                        form = PostsearchForm({'query' : query})
                                         pagelinks = \
                                                 PostPage.objects.filter(job_number__iexact=query)
                                         clientlinks = \
                                                 PostPage.objects.filter(client__name__icontains=query)
-        
 
                         if len(clientlinks) >= 1:
                                 user = request.user
@@ -305,8 +286,6 @@ def display_record(request, job_number):
             else:
                     tpl = 'display_template.html'
                     return render_to_response(tpl, { 'records': records, 'precords': precords, 'mrecords': mrecords, 'cdrecords': cdrecords, 'cerecords': cerecords, 'cmrecords': cmrecords, 'frrecords': frrecords })
-
-
 
 def file_upload(request):
                 return render_to_response('upload.html')

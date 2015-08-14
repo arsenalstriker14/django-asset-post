@@ -14,10 +14,9 @@ import json
 from django.core.exceptions import ImproperlyConfigured
 
 
-
-
 with open("secrets.json") as f:
     secrets = json.loads(f.read())
+
 
 def get_secret(setting, secrets=secrets):
     """Get secret or return explicit exception."""
@@ -28,7 +27,6 @@ def get_secret(setting, secrets=secrets):
         raise ImproperlyConfigured(error_msg)
 
 SECRET_KEY = get_secret("SECRET_KEY")
-
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -82,7 +80,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
-
 
 
 ROOT_URLCONF = 'dapprj.urls'

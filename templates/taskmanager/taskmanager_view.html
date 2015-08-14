@@ -113,18 +113,15 @@
             
         </div>
         <div class="row tab_row">
-                <div class="col-md-3">
-
-                </div>
                 
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div id="tbox_menu">
                         <ul>
                             <li id="list_in">{{ user.first_name }}'s Inbox</li>
                             <li id="list_out">{{ user.first_name }}'s Outbox</li>
                                         {% if boxrecords %}
                                 {% for boxrecord in boxrecords %}
-                            <li id="list_box_{{ boxrecord.id }}">{{ boxrecord.name }}</li>
+                            <li id="list_box_{{ boxrecord.id }}" name="{{ boxrecord.id }}">{{ boxrecord.name }}</li>
                                             {% endfor %}
                                             {% else %}
                                             {% endif %}
@@ -132,9 +129,7 @@
                         
                     </div>
                 </div>
-                <div class="col-md-3">
-
-                </div>
+                
         </div>
         <div class="row">
             <!-- the items -->
@@ -501,9 +496,9 @@
               
             
                 <script type="text/javascript">
-                $(document).ready(function() {
-                    $('#id_due_date').datetimepicker();
-                }); 
+                $('#id_due_date').datetimepicker({
+                        format: 'yyyy-mm-dd hh:ii'
+                });
                 $(function(){
                     var projectArray = document.getElementsByClassName('status_cell');
                     for (i=0; i< projectArray.length; i++){
@@ -553,34 +548,35 @@
                 });
                 
                 $(document).ready(function() {
+                    $("#list_in").css('background', '#999');
+                    $("#list_in").css('color', '#fff');
+
                     $( "#list_in" ).click(function() {
                         console.log('clicked');
                         $('.tlist').css('display', 'none');
+                        $("[id^=list_box_], #list_out").css('background', '#ddd');
+                        $("[id^=list_box_], #list_out").css('color', '#777');
                         $('#personal_tlist').fadeIn(1000, function() { });
+                        $(this).css('background', '#999');
+                        $(this).css('color', '#fff');
                     });
                     $( "#list_out" ).click(function() {
                         $('.tlist').css('display', 'none');
+                        $("[id^=list_box_], #list_in").css('background', '#ddd');
+                        $("[id^=list_box_], #list_in").css('color', '#777');
                         $('#assigned_tlist').fadeIn(1000, function() { });
+                        $(this).css('background', '#999');
+                        $(this).css('color', '#fff');
                     }); 
-                    $( "#list_box_1" ).click(function() {
+                    
+                    $("[id^=list_box_]").click(function() {
+                        var box_id = $(this).attr('name');
                         $('.tlist').css('display', 'none');
-                        $('#tlist_1').fadeIn(1000, function() { });
-                    });
-                    $( "#list_box_2" ).click(function() {
-                        $('.tlist').css('display', 'none');
-                        $('#tlist_2').fadeIn(1000, function() { });
-                    });
-                    $( "#list_box_3" ).click(function() {
-                        $('.tlist').css('display', 'none');
-                        $('#tlist_3').fadeIn(1000, function() { });
-                    });
-                    $( "#list_box_4" ).click(function() {
-                        $('.tlist').css('display', 'none');
-                        $('#tlist_4').fadeIn(1000, function() { });
-                    });
-                    $( "#list_box_5" ).click(function() {
-                        $('.tlist').css('display', 'none');
-                        $('#tlist_5').fadeIn(1000, function() { });
+                        $("[id^=list_box_], #list_out, #list_in").css('background', '#ddd');
+                        $("[id^=list_box_], #list_out, #list_in").css('color', '#777');
+                        $('#tlist_'+ box_id).fadeIn(1000, function() { });
+                        $(this).css('background', '#999');
+                        $(this).css('color', '#fff');
                     });               
                  });
                 </script>

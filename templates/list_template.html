@@ -101,7 +101,7 @@
                                 <td>{{ record.job_number }}</td>
                                 <td><a href="{% url 'display_record' record.job_number %}" target="_blank">{{ record.job_name }}</a></td>
                                 <td>{{ record.create_date }}</td>
-                                <td><a href="{% url 'assetpost:update_page' record.id %}"><input type="button" value="edit" class="list_tb_btn" /></a></td>
+                                <td><a href="{% url 'assetpost:updatePage' record.id %}"><input type="button" value="edit" class="list_tb_btn" /></a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
