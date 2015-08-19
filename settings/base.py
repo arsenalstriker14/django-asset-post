@@ -113,8 +113,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dap_db',
-        'USER': 'krcnyc',
-        'PASSWORD': 'jadzhia',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -152,7 +152,7 @@ TEMPLATE_DIRS = (
 
 MEDIA_URL = '/static/media/'
 
-MEDIA_ROOT = "/home/krcnyc/Projects/dap/static/media/"
+MEDIA_ROOT = ""
 
 LOGIN_REDIRECT_URL = ('/main/')
 
